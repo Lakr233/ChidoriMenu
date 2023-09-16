@@ -11,9 +11,9 @@ public extension UIButton {
     func presentMenu() {
         guard let menu = retrieveMenu() else { return }
         guard let presenter = parentViewController else { return }
-        
-        let original = convert(CGPoint.zero, to: presenter.view)
-        let chidoriMenu = ChidoriMenu(menu: menu, summonPoint: original)
+
+        let origin = convert(CGPointZero, to: window)
+        let chidoriMenu = ChidoriMenu(menu: menu, summonPoint: origin)
         chidoriMenu.delegate = MenuDelegate.shared
         presenter.present(chidoriMenu, animated: true, completion: nil)
     }
