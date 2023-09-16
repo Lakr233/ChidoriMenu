@@ -12,22 +12,26 @@ public extension UIButton {
         guard let menu = retrieveMenu() else { return }
         let center = convert(center, to: parentViewController?.view)
         let chidoriMenu = ChidoriMenu(menu: menu, summonPoint: center)
+        chidoriMenu.delegate = MenuDelegate.shared
         parentViewController?.present(chidoriMenu, animated: true, completion: nil)
     }
 }
 
-private extension UIButton {
-    var parentViewController: UIViewController? {
-        weak var parentResponder: UIResponder? = self
-        while parentResponder != nil {
-            parentResponder = parentResponder!.next
-            if let viewController = parentResponder as? UIViewController {
-                return viewController
-            }
-        }
-        return nil
-    }
+private class MenuDelegate: NSObject, ChidoriDelegate {
+    static let shared = MenuDelegate()
 
+    func didSelectAction(_ action: UIAction) {
+        guard action.responds(to: NSSelectorFromString("_handler")),
+              let handler = action.value(forKey: "_handler")
+        else { return }
+        typealias ActionBlock = @convention(block) (UIAction) -> Void
+        let blockPtr = UnsafeRawPointer(Unmanaged<AnyObject>.passUnretained(handler as AnyObject).toOpaque())
+        let block = unsafeBitCast(blockPtr, to: ActionBlock.self)
+        return block(action)
+    }
+}
+
+extension UIButton {
     private func retrieveMenu() -> UIMenu? {
         for interaction in interactions {
             if let menuInteraction = interaction as? UIContextMenuInteraction,
