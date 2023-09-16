@@ -10,10 +10,12 @@ import UIKit
 public extension UIButton {
     func presentMenu() {
         guard let menu = retrieveMenu() else { return }
-        let center = convert(center, to: parentViewController?.view)
-        let chidoriMenu = ChidoriMenu(menu: menu, summonPoint: center)
+        guard let presenter = parentViewController else { return }
+        
+        let original = convert(frame.origin, to: presenter.view)
+        let chidoriMenu = ChidoriMenu(menu: menu, summonPoint: original)
         chidoriMenu.delegate = MenuDelegate.shared
-        parentViewController?.present(chidoriMenu, animated: true, completion: nil)
+        presenter.present(chidoriMenu, animated: true, completion: nil)
     }
 }
 
