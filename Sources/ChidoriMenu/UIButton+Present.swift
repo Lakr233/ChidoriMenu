@@ -21,7 +21,7 @@ private class MenuDelegate: NSObject, ChidoriDelegate {
     static let shared = MenuDelegate()
 
     func didSelectAction(_ action: UIAction) {
-        guard action.responds(to: NSSelectorFromString("_handler")),
+        guard action.responds(to: NSSelectorFromString("handler")),
               let handler = action.value(forKey: "_handler")
         else { return }
         typealias ActionBlock = @convention(block) (UIAction) -> Void
