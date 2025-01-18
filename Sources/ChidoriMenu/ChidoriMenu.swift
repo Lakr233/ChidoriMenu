@@ -18,7 +18,7 @@ class ChidoriMenu: UIViewController {
     /// Where in the window the menu is being summond from
     let summonPoint: CGPoint
 
-    let visualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .systemMaterialLight))
+    let visualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .systemMaterial))
     private let shadowLayer = CALayer()
 
     /// Used to power the "drag to select" functionality like the iOS version
@@ -113,12 +113,12 @@ class ChidoriMenu: UIViewController {
         shadowLayer.masksToBounds = false
         shadowLayer.cornerRadius = ChidoriMenu.cornerRadius
         shadowLayer.cornerCurve = .continuous
-        shadowLayer.shadowColor = UIColor.black.cgColor
+        shadowLayer.shadowColor = UIColor.black.withAlphaComponent(0.5).cgColor
         shadowLayer.shadowOffset = .zero
-        shadowLayer.shadowOpacity = 0.15
+        shadowLayer.shadowOpacity = 0.5
         shadowLayer.shadowRadius = ChidoriMenu.shadowRadius
         shadowLayer.shouldRasterize = true
-        shadowLayer.rasterizationScale = UIScreen.main.scale
+        shadowLayer.rasterizationScale = view.window?.screen.scale ?? UIScreen.main.scale
         view.layer.addSublayer(shadowLayer)
     }
 
@@ -150,14 +150,14 @@ class ChidoriMenu: UIViewController {
             let menuChildren: [UIMenu] = [wrapperMenu]
             snapshot.appendSections(menuChildren)
 
-            menuChildren.forEach {
-                snapshot.appendItems($0.children as! [UIAction], toSection: $0)
+            for menuChild in menuChildren {
+                snapshot.appendItems(menuChild.children as! [UIAction], toSection: menuChild)
             }
         } else if let menuChildren = menu.children as? [UIMenu] {
             snapshot.appendSections(menuChildren)
 
-            menuChildren.forEach {
-                snapshot.appendItems($0.children as! [UIAction], toSection: $0)
+            for menuChild in menuChildren {
+                snapshot.appendItems(menuChild.children as! [UIAction], toSection: menuChild)
             }
         } else {
             preconditionFailure("Incorrect format. Do not mix UIAction and UIMenu in menu children for ChidoriMenu use.")
@@ -179,7 +179,7 @@ extension ChidoriMenu: UITableViewDelegate {
         guard section != tableView.numberOfSections - 1 else { return nil }
 
         let footerView = UIView()
-        footerView.backgroundColor = UIColor(white: 0.0, alpha: 0.1)
+        footerView.backgroundColor = UIColor.black.withAlphaComponent(0.1)
         return footerView
     }
 

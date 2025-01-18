@@ -79,12 +79,12 @@ class ChidoriMenuTableViewCell: UITableViewCell {
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
-        backgroundColor = selected ? UIColor(white: 0.5, alpha: 0.2) : .clear
+        backgroundColor = selected ? UIColor.systemBackground.withAlphaComponent(0.25) : .clear
     }
 
     override func setHighlighted(_ highlighted: Bool, animated: Bool) {
         super.setSelected(highlighted, animated: animated)
 
-        backgroundColor = highlighted ? UIColor(white: 0.5, alpha: 0.2) : .clear
+        backgroundColor = highlighted ? UIColor.systemBackground.withAlphaComponent(0.25) : .clear
     }
 }

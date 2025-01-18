@@ -34,7 +34,7 @@ class ChidoriPresentationController: UIPresentationController {
         darkOverlayView.accessibilityHint = "Dismiss context menu"
 
         // This is the only part where we depart from the iOS design, I find the background doesn't darken enough with the iOS one to provide enough contrast/attention, so add a bit more (the haptic-touch context menu variant blurs the background, which this one does not do)
-        darkOverlayView.backgroundColor = UIColor(white: 0.0, alpha: 0.2)
+        darkOverlayView.backgroundColor = UIColor.black.withAlphaComponent(0.2)
 
         darkOverlayView.alpha = 0.0
         presentingViewController.view.tintAdjustmentMode = .dimmed
@@ -121,15 +121,13 @@ class ChidoriPresentationController: UIPresentationController {
             return min(rightMostPermissableXPosition, max(leftShiftedPoint, lowestPermissableXPosition))
         }()
 
-        let y: CGFloat = {
-            // Check if we have enough room to place it below the touch point
+        let y: CGFloat = // Check if we have enough room to place it below the touch point
             if summonPoint.y + menuSize.height + offsetFromFinger + requiredSidePadding < containerView.bounds.height - containerView.safeAreaInsets.bottom {
-                return summonPoint.y + offsetFromFinger
+                summonPoint.y + offsetFromFinger
             } else {
                 // If not, iOS tries to keep as much in the bottom half of the screen as possible (to be closer to where the thumb normally is, presumably) so mimic that
-                return containerView.bounds.height - requiredSidePadding - containerView.safeAreaInsets.bottom - menuSize.height
+                containerView.bounds.height - requiredSidePadding - containerView.safeAreaInsets.bottom - menuSize.height
             }
-        }()
 
         return CGPoint(x: x, y: y)
     }

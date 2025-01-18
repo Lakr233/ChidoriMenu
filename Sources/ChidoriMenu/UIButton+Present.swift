@@ -10,26 +10,7 @@ import UIKit
 public extension UIButton {
     func presentMenu() {
         guard let menu = retrieveMenu() else { return }
-        guard let presenter = parentViewController else { return }
-
-        let origin = convert(CGPointZero, to: window)
-        let chidoriMenu = ChidoriMenu(menu: menu, summonPoint: origin)
-        chidoriMenu.delegate = MenuDelegate.shared
-        presenter.present(chidoriMenu, animated: true, completion: nil)
-    }
-}
-
-private class MenuDelegate: NSObject, ChidoriDelegate {
-    static let shared = MenuDelegate()
-
-    func didSelectAction(_ action: UIAction) {
-        guard action.responds(to: NSSelectorFromString("handler")),
-              let handler = action.value(forKey: "_handler")
-        else { return }
-        typealias ActionBlock = @convention(block) (UIAction) -> Void
-        let blockPtr = UnsafeRawPointer(Unmanaged<AnyObject>.passUnretained(handler as AnyObject).toOpaque())
-        let block = unsafeBitCast(blockPtr, to: ActionBlock.self)
-        return block(action)
+        present(menu: menu)
     }
 }
 
