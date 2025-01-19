@@ -16,8 +16,7 @@ class ChidoriMenu: UIViewController {
     let useDimmingView: Bool
 
     let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .systemMaterial))
-    let shadowLayer = CALayer()
-
+    let shadowView = UIView()
     let panGestureRecognizer: UIPanGestureRecognizer = .init()
 
     var transitionController: ChidoriAnimationController?
@@ -28,6 +27,15 @@ class ChidoriMenu: UIViewController {
                 height: CGFloat.greatestFiniteMagnitude
             )
         ).height.rounded(.up)
+    }
+
+    var backingScale: CGFloat = 1.0 {
+        didSet {
+            UIView.animate(withDuration: 0.4, delay: 0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.8) {
+                self.view.transform = CGAffineTransform(scaleX: self.backingScale, y: self.backingScale)
+                self.view.layoutIfNeeded()
+            }
+        }
     }
 
     required init(menu: UIMenu, anchorPoint: CGPoint, useDimmingView: Bool = true) {
@@ -56,16 +64,14 @@ class ChidoriMenu: UIViewController {
         view.backgroundColor = .clear
         view.layer.masksToBounds = false
 
-        shadowLayer.masksToBounds = false
-        shadowLayer.cornerRadius = ChidoriMenu.cornerRadius
-        shadowLayer.cornerCurve = .continuous
-        shadowLayer.shadowColor = UIColor.black.withAlphaComponent(0.5).cgColor
-        shadowLayer.shadowOffset = .zero
-        shadowLayer.shadowOpacity = 0.5
-        shadowLayer.shadowRadius = 24
-        shadowLayer.shouldRasterize = true
-        shadowLayer.rasterizationScale = view.window?.screen.scale ?? UIScreen.main.scale
-        view.layer.addSublayer(shadowLayer)
+        shadowView.backgroundColor = ChidoriMenu.dimmingBackgroundColor
+        shadowView.layer.shadowOpacity = 0.1
+        shadowView.layer.shadowOffset = .zero
+        shadowView.layer.shadowColor = UIColor.black.cgColor
+        shadowView.layer.shadowRadius = 8
+        shadowView.layer.cornerRadius = ChidoriMenu.cornerRadius
+        shadowView.layer.cornerCurve = .continuous
+        view.addSubview(shadowView)
 
         blurView.layer.masksToBounds = true
         blurView.layer.cornerRadius = ChidoriMenu.cornerRadius
@@ -73,7 +79,7 @@ class ChidoriMenu: UIViewController {
         view.addSubview(blurView)
 
         tableView.separatorInset = .zero
-        tableView.contentInset = .init(top: -1, left: 0, bottom: 0, right: 0)
+        tableView.contentInset = .zero
         tableView.delegate = self
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.backgroundColor = .clear
@@ -121,42 +127,26 @@ class ChidoriMenu: UIViewController {
             height: contentFrame.height
         )
 
-        shadowLayer.frame = view.bounds
-        shadowLayer.shadowPath = UIBezierPath(
-            roundedRect: view.bounds,
-            cornerRadius: ChidoriMenu.cornerRadius
-        ).cgPath
-
-        let maskLayer = CAShapeLayer()
-        maskLayer.frame = view.bounds
-
-        maskLayer.fillRule = .evenOdd
-
-        // We want this mask to be larger than the shadow layer
-        // because the shadow layer draws outside its bounds.
-        // Make it suitably large enough to cover the shadow radius,
-        // which anecdotally seems approximately double the radius.
-        let mainPath = UIBezierPath(
-            roundedRect: CGRect(
-                x: -ChidoriMenu.shadowRadius * 2.0,
-                y: -ChidoriMenu.shadowRadius * 2.0,
-                width: view.bounds.width + ChidoriMenu.shadowRadius * 4.0,
-                height: view.bounds.height + ChidoriMenu.shadowRadius * 4.0
+        shadowView.layer.shadowPath = UIBezierPath(
+            roundedRect: .init(
+                x: 0,
+                y: 0,
+                width: ChidoriMenu.width,
+                height: height
             ),
             cornerRadius: ChidoriMenu.cornerRadius
-        )
-
-        let maskOutPath = UIBezierPath(
-            roundedRect: view.bounds,
-            cornerRadius: ChidoriMenu.cornerRadius
-        )
-        mainPath.append(maskOutPath)
-        maskLayer.path = mainPath.cgPath
-        shadowLayer.mask = maskLayer
+        ).cgPath
 
         let isTableViewNotFullyVisible = tableView.contentSize.height > view.bounds.height
         tableView.isScrollEnabled = isTableViewNotFullyVisible
         panGestureRecognizer.isEnabled = !isTableViewNotFullyVisible
+    }
+
+    override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
+        if let superController = presentingViewController as? ChidoriMenu {
+            superController.backingScale = 1.0
+        }
+        super.dismiss(animated: flag, completion: completion)
     }
 
     func dismissIfEmpty() {

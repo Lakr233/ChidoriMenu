@@ -113,7 +113,11 @@ extension ChidoriMenu {
             action.execute()
             dismissToRoot()
         case let .submenu(menu):
-            cell.present(menu: menu)
+            cell.present(menu: menu, anchorPoint: .init(
+                x: cell.convert(cell.bounds, to: cell.window ?? .init()).midX,
+                y: cell.convert(.zero, to: cell.window ?? .init()).minY - ChidoriMenu.offsetY
+            ))
+            backingScale = 0.95
         }
     }
 

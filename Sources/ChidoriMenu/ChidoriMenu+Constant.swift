@@ -12,6 +12,7 @@ extension ChidoriMenu {
     static let cornerRadius: CGFloat = 14
     static let shadowRadius: CGFloat = 24
     static let sectionTopPadding: CGFloat = 8
+    static let offsetY: CGFloat = 16
 
     static let dimmingBackgroundColor = UIColor.black.withAlphaComponent(0.1)
     static let dimmingSectionSepratorColor = UIColor.black.withAlphaComponent(0.1)

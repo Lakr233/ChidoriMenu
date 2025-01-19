@@ -101,9 +101,9 @@ class ChidoriPresentationController: UIPresentationController {
         }()
 
         let y: CGFloat = {
-            let maxY = anchorPoint.y + menuSize.height + minimalEdgeInset + 10
+            let maxY = anchorPoint.y + menuSize.height + minimalEdgeInset + ChidoriMenu.offsetY
             let allowedY = containerView.bounds.height - containerView.safeAreaInsets.bottom
-            if maxY < allowedY { return anchorPoint.y + 10 /* move below a little bit */ }
+            if maxY < allowedY { return anchorPoint.y + ChidoriMenu.offsetY /* move below a little bit */ }
             // if not, iOS tries to keep as much in the bottom half of the screen as possible
             // to be closer to where the thumb normally is, presumably
             return containerView.bounds.height
