@@ -167,11 +167,11 @@ class ChidoriMenu: UIViewController {
         dismiss(animated: true)
     }
 
-    override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
-        let presentingController = presentingViewController
-        super.dismiss(animated: flag, completion: completion)
-        if let chidoriMenu = presentingController as? ChidoriMenu {
-            chidoriMenu.dismiss(animated: true)
+    func dismissToRoot() {
+        var popper: UIViewController? = self
+        while let controller = popper as? ChidoriMenu {
+            popper = controller.presentingViewController
+            controller.dismiss(animated: true)
         }
     }
 }

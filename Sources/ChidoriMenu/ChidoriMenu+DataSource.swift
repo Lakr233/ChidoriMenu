@@ -90,7 +90,7 @@ extension ChidoriMenu {
         switch content {
         case let .action(action):
             action.execute()
-            dismiss(animated: true)
+            dismissToRoot()
         case let .submenu(menu):
             var summonPoint: CGPoint?
             if let window = cell.window {

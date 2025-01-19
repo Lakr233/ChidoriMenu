@@ -26,7 +26,12 @@ class ChidoriAnimationController: NSObject, ChidoriDelegateProtocol {
     func transitionDuration(
         using _: UIViewControllerContextTransitioning?
     ) -> TimeInterval {
-        0.4
+        switch type {
+        case .presentation:
+            0.4
+        case .dismissal:
+            0.3
+        }
     }
 
     func startInteractiveTransition(
@@ -76,7 +81,7 @@ class ChidoriAnimationController: NSObject, ChidoriDelegateProtocol {
 
         let propertyAnimator = UIViewPropertyAnimator(
             duration: transitionDuration(using: context),
-            dampingRatio: 0.8
+            dampingRatio: 0.75
         )
         propertyAnimator.isInterruptible = true
         propertyAnimator.isUserInteractionEnabled = true
