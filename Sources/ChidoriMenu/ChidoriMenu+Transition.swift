@@ -39,7 +39,6 @@ extension ChidoriMenu: UIViewControllerTransitioningDelegate {
             presenting: presenting
         )
         controller.transitionDelegate = self
-        controller.dimmView.isHidden = !useDimmingView
         return controller
     }
 }

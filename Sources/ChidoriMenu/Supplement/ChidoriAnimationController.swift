@@ -28,9 +28,9 @@ class ChidoriAnimationController: NSObject, ChidoriDelegateProtocol {
     ) -> TimeInterval {
         switch type {
         case .presentation:
-            0.4
+            0.5
         case .dismissal:
-            0.3
+            0.35
         }
     }
 

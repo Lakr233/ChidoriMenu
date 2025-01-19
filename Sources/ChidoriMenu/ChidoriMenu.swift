@@ -13,7 +13,6 @@ class ChidoriMenu: UIViewController {
 
     let menu: UIMenu
     let anchorPoint: CGPoint
-    let useDimmingView: Bool
 
     let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .systemMaterial))
     let shadowView = UIView()
@@ -30,19 +29,22 @@ class ChidoriMenu: UIViewController {
         ).height.rounded(.up)
     }
 
-    var backingScale: CGFloat = 1.0 {
-        didSet {
-            UIView.animate(withDuration: 0.4, delay: 0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.8) {
-                self.view.transform = CGAffineTransform(scaleX: self.backingScale, y: self.backingScale)
-                self.view.layoutIfNeeded()
-            }
-        }
+    var menuStackScaleFactor: CGFloat = 1.0 {
+        didSet { UIView.animate(
+            withDuration: 0.5,
+            delay: 0,
+            usingSpringWithDamping: 1.0,
+            initialSpringVelocity: 0.8
+        ) { [self] in
+            let factor = menuStackScaleFactor
+            view.transform = CGAffineTransform(scaleX: factor, y: factor)
+            view.layoutIfNeeded()
+        } }
     }
 
-    required init(menu: UIMenu, anchorPoint: CGPoint, useDimmingView: Bool = true) {
+    required init(menu: UIMenu, anchorPoint: CGPoint) {
         self.menu = menu
         self.anchorPoint = anchorPoint
-        self.useDimmingView = useDimmingView
 
         tableView = TableView(frame: .zero, style: .plain)
         dataSource = Self.createDataSource(tableView: tableView)
@@ -145,7 +147,7 @@ class ChidoriMenu: UIViewController {
 
     override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
         let superController = presentingViewController as? ChidoriMenu
-        superController?.backingScale = 1.0
+        superController?.menuStackScaleFactor = 1.0
         super.dismiss(animated: flag) {
             completion?()
             if self.shouldDismissWithSubmenu { superController?.dismiss(animated: true) }

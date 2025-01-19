@@ -118,7 +118,7 @@ extension ChidoriMenu {
                 x: cell.convert(cell.bounds, to: cell.window ?? .init()).midX,
                 y: cell.convert(.zero, to: cell.window ?? .init()).minY - ChidoriMenu.offsetY
             ))
-            iterateMenusInStack { $0.backingScale *= 0.95 }
+            iterateMenusInStack { $0.menuStackScaleFactor *= 0.95 }
         }
     }
 
