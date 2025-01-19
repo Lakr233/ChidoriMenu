@@ -1,36 +1,48 @@
 # ChidoriMenu 🐦⚡️
 
-An easy way to add popover menus visually similar to the [Context Menus](https://developer.apple.com/design/human-interface-guidelines/ios/controls/context-menus/) and [Pull Down Menus](https://developer.apple.com/design/human-interface-guidelines/ios/controls/pull-down-menus/) iOS uses but with some advantages. (Effectively just a rebuild of Pull Down Menus as a custom view controller to gain some flexibility.)
+A seamless drop-in replacement for UIMenu & UIAction, featuring nested menu support and dark mode compatibility.
 
-Copied most of the code from [https://github.com/christianselig/ChidoriMenu](https://github.com/christianselig/ChidoriMenu), same license.
+The inspiration behind this project stems from Apple's lack of a unified interface across iOS and Mac Catalyst apps, as well as the absence of a built-in menu presentation method. To address these gaps—and to enable greater customization—we developed ChidoriMenu.
+
+This project draws heavily on code from [ChidoriMenu](https://github.com/christianselig/ChidoriMenu), and as such, we adhere to the same license.
+
+---
 
 ## Features
 
-- [x] Added support for UIMenu & UIAction
-- [x] Added drop in replacement for `_presentMenuAtLocation:` (not recommended)
-- [x] Added support for nested menus in children
-- [x] Added support for menu option: `.displayInline`
-- [x] Added support for dark mode
-- [x] Fixed scrolling issue with selection
-- [x] Fixed multiple action called at the same time
-- [ ] Added support for UIDeferredMenuElement (Help Wanted)
+- [x] Added support for UIMenu & UIAction  
+- [x] Added drop-in replacement for `_presentMenuAtLocation:` (not recommended for general use)  
+- [x] Added support for nested menus in child elements  
+- [x] Added support for the `.displayInline` menu option  
+- [x] Added compatibility with dark mode  
+- [x] Fixed scrolling issues during selection  
+- [x] Fixed multiple actions triggering simultaneously  
+- [ ] Added support for UIDeferredMenuElement (Contributions Welcome!)  
+
+---
 
 ## Requirements
 
-- iOS 15.0+
-- macCatalyst 15.0+
+- iOS 15.0 or later
+- macCatalyst 15.0 or later
+
+---
 
 ## Usage
 
-```
+Getting started is straightforward. While the interface differs slightly from Apple's menu implementation, the core principles remain the same. Mac Catalyst is fully supported, though it does not bridge to AppKit menus—it functions identically to iOS.
+
+```swift
 UIButton.presentMenu()
 UIView.present(menu: menu)
 ```
 
+For detailed examples, check out the example project included in the repository.
+
 ## License
 
-[MIT License](./LICENSE)
+ChidoriMenu is available under the MIT license. See the LICENSE file for more info.
 
 ---
 
-2023.9, Made with love by Lakr233
+2025.1.20 - Made with ❤️ by Lakr233
