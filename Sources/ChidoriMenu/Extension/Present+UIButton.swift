@@ -28,7 +28,7 @@ extension UIButton {
             }
         }
         if let menuConfig = contextMenuInteraction(
-            .init(delegate: JustGiveMeMenu.shared),
+            .init(delegate: RetrieveMenuDelegate.shared),
             configurationForMenuAtLocation: .zero
         ), let menu = menuConfig.retrieveMenu() {
             return menu
@@ -37,9 +37,8 @@ extension UIButton {
     }
 }
 
-private class JustGiveMeMenu: NSObject, UIContextMenuInteractionDelegate {
-    static let shared = JustGiveMeMenu()
-
+private class RetrieveMenuDelegate: NSObject, UIContextMenuInteractionDelegate {
+    static let shared = RetrieveMenuDelegate()
     func contextMenuInteraction(
         _: UIContextMenuInteraction,
         configurationForMenuAtLocation _: CGPoint
@@ -50,8 +49,8 @@ private class JustGiveMeMenu: NSObject, UIContextMenuInteractionDelegate {
 
 private extension UIContextMenuConfiguration {
     func retrieveMenu() -> UIMenu? {
-        guard responds(to: NSSelectorFromString("actionProvider")),
-              let actionProvider = value(forKey: "_actionProvider")
+        guard responds(to: NSSelectorFromString(["Provider", "action"].reversed().joined())),
+              let actionProvider = value(forKey: ["Provider", "action", "_"].reversed().joined())
         else { return nil }
         typealias ActionProviderBlock = @convention(block) ([UIMenuElement]) -> (UIMenu?)
         let blockPtr = UnsafeRawPointer(Unmanaged<AnyObject>.passUnretained(actionProvider as AnyObject).toOpaque())

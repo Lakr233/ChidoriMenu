@@ -6,15 +6,26 @@ Copied most of the code from [https://github.com/christianselig/ChidoriMenu](htt
 
 ## Features
 
-- [x] Added drop in replacement for `_presentMenuAtLocation:`
-
-```
-UIButton.presentMenu() // that's all
-```
+- [x] Added support for UIMenu & UIAction
+- [x] Added drop in replacement for `_presentMenuAtLocation:` (not recommended)
+- [x] Added support for nested menus in children
+- [x] Added support for menu option: `.displayInline`
+- [x] Added support for dark mode
+- [x] Fixed scrolling issue with selection
+- [x] Fixed multiple action called at the same time
+- [ ] Added support for UIDeferredMenuElement (Help Wanted)
 
 ## Requirements
 
-- iOS 14.0+
+- iOS 15.0+
+- macCatalyst 15.0+
+
+## Usage
+
+```
+UIButton.presentMenu()
+UIView.present(menu: menu)
+```
 
 ## License
 
