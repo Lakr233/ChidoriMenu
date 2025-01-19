@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		503E58F02D3C0D6B007BD8C6 /* ChidoriMenu in Frameworks */ = {isa = PBXBuildFile; productRef = 503E58EF2D3C0D6B007BD8C6 /* ChidoriMenu */; };
 		503E58F32D3C10BF007BD8C6 /* LookinServer in Frameworks */ = {isa = PBXBuildFile; productRef = 503E58F22D3C10BF007BD8C6 /* LookinServer */; };
+		503E591E2D3D0F1C007BD8C6 /* SPIndicator in Frameworks */ = {isa = PBXBuildFile; productRef = 503E591D2D3D0F1C007BD8C6 /* SPIndicator */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 			files = (
 				503E58F02D3C0D6B007BD8C6 /* ChidoriMenu in Frameworks */,
 				503E58F32D3C10BF007BD8C6 /* LookinServer in Frameworks */,
+				503E591E2D3D0F1C007BD8C6 /* SPIndicator in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -82,6 +84,7 @@
 			packageProductDependencies = (
 				503E58EF2D3C0D6B007BD8C6 /* ChidoriMenu */,
 				503E58F22D3C10BF007BD8C6 /* LookinServer */,
+				503E591D2D3D0F1C007BD8C6 /* SPIndicator */,
 			);
 			productName = ChidoriMenuExample;
 			productReference = 505109962D3C0D1000F62A71 /* ChidoriMenuExample.app */;
@@ -113,6 +116,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				503E58F12D3C10BF007BD8C6 /* XCRemoteSwiftPackageReference "LookinServer" */,
+				503E591C2D3D0F1C007BD8C6 /* XCRemoteSwiftPackageReference "SPIndicator" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 505109972D3C0D1000F62A71 /* Products */;
@@ -352,6 +356,14 @@
 				minimumVersion = 1.2.8;
 			};
 		};
+		503E591C2D3D0F1C007BD8C6 /* XCRemoteSwiftPackageReference "SPIndicator" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ivanvorobei/SPIndicator";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.6.5;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -363,6 +375,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 503E58F12D3C10BF007BD8C6 /* XCRemoteSwiftPackageReference "LookinServer" */;
 			productName = LookinServer;
+		};
+		503E591D2D3D0F1C007BD8C6 /* SPIndicator */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 503E591C2D3D0F1C007BD8C6 /* XCRemoteSwiftPackageReference "SPIndicator" */;
+			productName = SPIndicator;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

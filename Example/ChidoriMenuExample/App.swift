@@ -6,6 +6,7 @@
 //
 
 import ChidoriMenu
+import SPIndicator
 import SwiftUI
 
 @main
@@ -49,9 +50,17 @@ struct Content: UIViewControllerRepresentable {
         }
 
         let menuList: [Menu] = [
-            .init(title: "Default Preset", menu: .init(children: [
+            .init(title: "Copy Items", menu: .init(children: [
                 UIAction(title: "Copy", image: UIImage(systemName: "doc.on.doc")) { _ in
-                    print("Copy")
+                    SPIndicatorView(title: "Copied", preset: .done).present()
+                },
+            ])),
+            .init(title: "Paste Items", menu: .init(children: [
+                UIAction(title: "Copy", image: UIImage(systemName: "doc.on.doc")) { _ in
+                    SPIndicatorView(title: "Copied", preset: .done).present()
+                },
+                UIAction(title: "Paste", image: UIImage(systemName: "doc.on.doc")) { _ in
+                    SPIndicatorView(title: "Pasted", preset: .done).present()
                 },
             ])),
         ]
@@ -66,7 +75,7 @@ struct Content: UIViewControllerRepresentable {
 
         func tableView(_: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-            let menu = menuList[indexPath.section]
+            let menu = menuList[indexPath.row]
             cell.textLabel?.text = menu.title
             return cell
         }
@@ -74,7 +83,7 @@ struct Content: UIViewControllerRepresentable {
         func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
             tableView.deselectRow(at: indexPath, animated: true)
             let cell = tableView.cellForRow(at: indexPath)
-            cell?.present(menu: menuList[indexPath.section].menu)
+            cell?.present(menu: menuList[indexPath.row].menu)
         }
     }
 

@@ -1,5 +1,5 @@
 //
-//  UIButton+Present.swift
+//  Present+UIButton.swift
 //
 //
 //  Created by QAQ on 2023/9/16.
@@ -40,7 +40,10 @@ extension UIButton {
 private class JustGiveMeMenu: NSObject, UIContextMenuInteractionDelegate {
     static let shared = JustGiveMeMenu()
 
-    func contextMenuInteraction(_: UIContextMenuInteraction, configurationForMenuAtLocation _: CGPoint) -> UIContextMenuConfiguration? {
+    func contextMenuInteraction(
+        _: UIContextMenuInteraction,
+        configurationForMenuAtLocation _: CGPoint
+    ) -> UIContextMenuConfiguration? {
         nil
     }
 }
