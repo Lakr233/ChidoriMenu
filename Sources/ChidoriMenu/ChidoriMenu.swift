@@ -13,6 +13,7 @@ class ChidoriMenu: UIViewController {
 
     let menu: UIMenu
     let summonPoint: CGPoint
+    let useDimmingView: Bool
 
     let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .systemMaterial))
     let shadowLayer = CALayer()
@@ -29,9 +30,11 @@ class ChidoriMenu: UIViewController {
         ).height.rounded(.up)
     }
 
-    init(menu: UIMenu, summonPoint: CGPoint) {
+    init(menu: UIMenu, summonPoint: CGPoint, useDimmingView: Bool = true) {
         self.menu = menu
         self.summonPoint = summonPoint
+        self.useDimmingView = useDimmingView
+
         tableView = .init(frame: .zero, style: .plain)
         dataSource = Self.createDataSource(tableView: tableView)
 
@@ -75,6 +78,9 @@ class ChidoriMenu: UIViewController {
         tableView.backgroundColor = .clear
         tableView.allowsMultipleSelection = false
         tableView.selectionFollowsFocus = true
+        tableView.allowsSelection = true
+        tableView.allowsFocus = false
+        tableView.sectionHeaderTopPadding = Self.sectionTopPadding
         tableView.verticalScrollIndicatorInsets = UIEdgeInsets(
             top: ChidoriMenu.cornerRadius,
             left: 0.0,
@@ -86,15 +92,6 @@ class ChidoriMenu: UIViewController {
         tableView.estimatedSectionHeaderHeight = 0.0
         tableView.estimatedRowHeight = 0.0
         tableView.estimatedSectionFooterHeight = 0.0
-
-        let lastSepratorHider = UIView()
-        lastSepratorHider.frame = CGRect(
-            x: 0.0,
-            y: 0.0,
-            width: CGFloat.leastNormalMagnitude,
-            height: CGFloat.leastNormalMagnitude
-        )
-        tableView.tableFooterView = lastSepratorHider
 
         panGestureRecognizer.addTarget(
             self,
@@ -115,7 +112,13 @@ class ChidoriMenu: UIViewController {
         super.viewDidLayoutSubviews()
 
         blurView.frame = view.bounds
-        tableView.frame = blurView.contentView.bounds
+        let contentFrame = blurView.contentView.bounds
+        tableView.frame = .init(
+            x: contentFrame.minX,
+            y: contentFrame.minY + 1,
+            width: contentFrame.width,
+            height: contentFrame.height
+        )
 
         shadowLayer.frame = view.bounds
         shadowLayer.shadowPath = UIBezierPath(
@@ -155,32 +158,20 @@ class ChidoriMenu: UIViewController {
         panGestureRecognizer.isEnabled = !isTableViewNotFullyVisible
     }
 
-    func updateSnapshot() {
-        var snapshot = NSDiffableDataSourceSnapshot<UIMenu, UIAction>()
-        if let actionChildren = menu.children as? [UIAction] {
-            let wrapperMenu = UIMenu(options: [.displayInline], children: actionChildren)
-            let menuChildren: [UIMenu] = [wrapperMenu]
-            snapshot.appendSections(menuChildren)
-            for menuChild in menuChildren {
-                let actions = menuChild.children as! [UIAction]
-                snapshot.appendItems(actions, toSection: menuChild)
-            }
-        } else if let menuChildren = menu.children as? [UIMenu] {
-            snapshot.appendSections(menuChildren)
-            for menuChild in menuChildren {
-                let actions = menuChild.children as! [UIAction]
-                snapshot.appendItems(actions, toSection: menuChild)
-            }
-        } else {
-            assertionFailure()
+    func dismissIfEmpty() {
+        var count = 0
+        for idx in 0 ..< dataSource.numberOfSections(in: tableView) {
+            count += dataSource.tableView(tableView, numberOfRowsInSection: idx)
         }
-        dataSource.apply(snapshot, animatingDifferences: false)
+        guard count <= 0 else { return }
+        dismiss(animated: true)
     }
 
-    func executeAction(_ indexPath: IndexPath) {
-        guard let action = dataSource.itemIdentifier(for: indexPath) else {
-            return
+    override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
+        let presentingController = presentingViewController
+        super.dismiss(animated: flag, completion: completion)
+        if let chidoriMenu = presentingController as? ChidoriMenu {
+            chidoriMenu.dismiss(animated: true)
         }
-        action.execute()
     }
 }

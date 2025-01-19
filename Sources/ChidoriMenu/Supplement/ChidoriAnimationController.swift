@@ -133,8 +133,8 @@ class ChidoriAnimationController: NSObject, ChidoriDelegateProtocol {
         toDesiredPoint desiredPoint: CGPoint
     ) -> CGVector {
         let centerPointOfMenuView = CGPoint(
-            x: chidoriMenuFrame.origin.x + (chidoriMenuFrame.width / 2.0),
-            y: chidoriMenuFrame.origin.y + (chidoriMenuFrame.height / 2.0)
+            x: chidoriMenuFrame.origin.x + (chidoriMenuFrame.width / 2),
+            y: chidoriMenuFrame.origin.y + (chidoriMenuFrame.height / 2)
         )
         let translationRequired = CGVector(
             dx: desiredPoint.x - centerPointOfMenuView.x,

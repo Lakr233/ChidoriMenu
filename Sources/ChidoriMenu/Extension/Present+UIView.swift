@@ -8,12 +8,17 @@
 import UIKit
 
 public extension UIView {
-    func present(menu: UIMenu) {
+    func present(menu: UIMenu, summonPoint: CGPoint? = nil) {
         guard let presenter = parentViewController else { return }
-        let origin = convert(CGPointZero, to: window)
-        let chidoriMenu = ChidoriMenu(menu: menu, summonPoint: origin)
+        let chidoriMenu = ChidoriMenu(
+            menu: menu,
+            summonPoint: summonPoint ?? convert(.init(
+                x: bounds.midX,
+                y: bounds.midY
+            ), to: window)
+        )
         presenter.present(chidoriMenu, animated: true) {
-            if menu.children.isEmpty { chidoriMenu.dismiss(animated: true) }
+            chidoriMenu.dismissIfEmpty()
         }
     }
 }

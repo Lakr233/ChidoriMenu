@@ -40,6 +40,10 @@ extension ChidoriMenu {
             selectionStyle = .none
             accessibilityTraits = [.button]
 
+            preservesSuperviewLayoutMargins = false
+            separatorInset = UIEdgeInsets.zero
+            layoutMargins = UIEdgeInsets.zero
+
             menuTitleLabel.font = UIFont.systemFont(ofSize: 17.0, weight: .regular)
             menuTitleLabel.translatesAutoresizingMaskIntoConstraints = false
             menuTitleLabel.numberOfLines = 0
@@ -87,12 +91,40 @@ extension ChidoriMenu {
             backgroundColor = highlighted ? Self.darkColor : .clear
         }
     }
-}
 
-extension ChidoriMenu.Cell {
-    static let horizontalPadding: CGFloat = 16
-    static let verticalPadding: CGFloat = 12.0
-    static let iconTrailingOffset: CGFloat = 24.0
-    static let titleToIconMinSpacing: CGFloat = -16.0
-    static let darkColor = UIColor.black.withAlphaComponent(0.05)
+    class HeaderCell: UIView {
+        let titleLabel: UILabel = .init()
+
+        init() {
+            super.init(frame: .zero)
+
+            titleLabel.font = UIFont.preferredFont(forTextStyle: .footnote)
+            titleLabel.numberOfLines = 1
+            titleLabel.textColor = .secondaryLabel
+            titleLabel.textAlignment = .left
+            addSubview(titleLabel)
+
+            titleLabel.translatesAutoresizingMaskIntoConstraints = false
+
+            NSLayoutConstraint.activate([
+                titleLabel.leadingAnchor.constraint(
+                    equalTo: leadingAnchor,
+                    constant: ChidoriMenu.Cell.horizontalPadding
+                ),
+                titleLabel.trailingAnchor.constraint(
+                    equalTo: trailingAnchor,
+                    constant: -ChidoriMenu.Cell.horizontalPadding
+                ),
+                titleLabel.centerYAnchor.constraint(
+                    equalTo: centerYAnchor,
+                    constant: -ChidoriMenu.sectionTopPadding / 2
+                ),
+            ])
+        }
+
+        @available(*, unavailable)
+        required init?(coder _: NSCoder) {
+            fatalError()
+        }
+    }
 }

@@ -50,18 +50,101 @@ struct Content: UIViewControllerRepresentable {
         }
 
         let menuList: [Menu] = [
-            .init(title: "Copy Items", menu: .init(children: [
-                UIAction(title: "Copy", image: UIImage(systemName: "doc.on.doc")) { _ in
+            .init(title: "Show Menu Set", menu: .init(children: [
+                UIAction(
+                    title: "Copy",
+                    image: UIImage(systemName: "doc.on.doc")
+                ) { _ in
                     SPIndicatorView(title: "Copied", preset: .done).present()
                 },
-            ])),
-            .init(title: "Paste Items", menu: .init(children: [
-                UIAction(title: "Copy", image: UIImage(systemName: "doc.on.doc")) { _ in
-                    SPIndicatorView(title: "Copied", preset: .done).present()
-                },
-                UIAction(title: "Paste", image: UIImage(systemName: "doc.on.doc")) { _ in
+                UIAction(
+                    title: "Paste",
+                    image: UIImage(systemName: "doc.on.doc"),
+                    attributes: .disabled
+                ) { _ in
                     SPIndicatorView(title: "Pasted", preset: .done).present()
                 },
+                UIAction(
+                    title: "Delete",
+                    image: UIImage(systemName: "trash"),
+                    attributes: .destructive
+                ) { _ in
+                    SPIndicatorView(title: "Delete", preset: .done).present()
+                },
+            ])),
+            .init(title: "Show Nested Menu Set", menu: .init(title: "Root Menu", children: [
+                UIAction(
+                    title: "Copy",
+                    image: UIImage(systemName: "doc.on.doc")
+                ) { _ in
+                    SPIndicatorView(title: "Copied", preset: .done).present()
+                },
+                UIAction(
+                    title: "Paste",
+                    image: UIImage(systemName: "doc.on.doc"),
+                    attributes: .disabled
+                ) { _ in
+                    SPIndicatorView(title: "Pasted", preset: .done).present()
+                },
+                UIAction(
+                    title: "Delete",
+                    image: UIImage(systemName: "trash"),
+                    attributes: .destructive
+                ) { _ in
+                    SPIndicatorView(title: "Delete", preset: .done).present()
+                },
+                UIMenu(
+                    title: "Child Menu",
+                    children: [
+                        UIAction(
+                            title: "Copy",
+                            image: UIImage(systemName: "doc.on.doc")
+                        ) { _ in
+                            SPIndicatorView(title: "Copied", preset: .done).present()
+                        },
+                        UIAction(
+                            title: "Paste",
+                            image: UIImage(systemName: "doc.on.doc"),
+                            attributes: .disabled
+                        ) { _ in
+                            SPIndicatorView(title: "Pasted", preset: .done).present()
+                        },
+                        UIAction(
+                            title: "Delete",
+                            image: UIImage(systemName: "trash"),
+                            attributes: .destructive
+                        ) { _ in
+                            SPIndicatorView(title: "Delete", preset: .done).present()
+                        },
+                    ]
+                ),
+                UIMenu(
+                    title: "Inline Menu",
+                    image: UIImage(systemName: "arrow.right"),
+                    options: [.displayInline],
+                    children: [
+                        UIAction(
+                            title: "Copy",
+                            image: UIImage(systemName: "doc.on.doc")
+                        ) { _ in
+                            SPIndicatorView(title: "Copied", preset: .done).present()
+                        },
+                        UIAction(
+                            title: "Paste",
+                            image: UIImage(systemName: "doc.on.doc"),
+                            attributes: .disabled
+                        ) { _ in
+                            SPIndicatorView(title: "Pasted", preset: .done).present()
+                        },
+                        UIAction(
+                            title: "Delete",
+                            image: UIImage(systemName: "trash"),
+                            attributes: .destructive
+                        ) { _ in
+                            SPIndicatorView(title: "Delete", preset: .done).present()
+                        },
+                    ]
+                ),
             ])),
         ]
 
@@ -77,13 +160,30 @@ struct Content: UIViewControllerRepresentable {
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
             let menu = menuList[indexPath.row]
             cell.textLabel?.text = menu.title
+            cell.accessoryType = .disclosureIndicator
             return cell
         }
 
         func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
             tableView.deselectRow(at: indexPath, animated: true)
-            let cell = tableView.cellForRow(at: indexPath)
-            cell?.present(menu: menuList[indexPath.row].menu)
+            guard let cell = tableView.cellForRow(at: indexPath) else { return }
+            let anchorView = UIView()
+            cell.addSubview(anchorView)
+            anchorView.frame = .init(
+                x: cell.bounds.midX,
+                y: cell.bounds.midY,
+                width: 0,
+                height: 0
+            )
+            let menu = menuList[indexPath.row].menu
+            anchorView.present(menu: menu)
+            anchorView.removeFromSuperview()
+        }
+
+        func tableView(_ tableView: UITableView, viewForHeaderInSection _: Int) -> UIView? {
+            let view = UIView()
+            view.frame = .init(x: 0, y: 0, width: tableView.bounds.width, height: 20)
+            return view
         }
     }
 
