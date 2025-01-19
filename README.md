@@ -6,27 +6,25 @@ The inspiration behind this project stems from Apple's lack of a unified interfa
 
 This project draws heavily on code from [ChidoriMenu](https://github.com/christianselig/ChidoriMenu), and as such, we adhere to the same license.
 
----
+## Preview
+
+![Screenshot](<./Resources/Simulator%20Screenshot%20-%20iPhone%20SE%20(3rd%20generation)%20-%202025-01-20%20at%2000.48.33.jpeg>)
 
 ## Features
 
-- [x] Added support for UIMenu & UIAction  
-- [x] Added drop-in replacement for `_presentMenuAtLocation:` (not recommended for general use)  
-- [x] Added support for nested menus in child elements  
-- [x] Added support for the `.displayInline` menu option  
-- [x] Added compatibility with dark mode  
-- [x] Fixed scrolling issues during selection  
-- [x] Fixed multiple actions triggering simultaneously  
-- [ ] Added support for UIDeferredMenuElement (Contributions Welcome!)  
-
----
+- [x] Added support for UIMenu & UIAction
+- [x] Added drop-in replacement for `_presentMenuAtLocation:` (not recommended for general use)
+- [x] Added support for nested menus in child elements
+- [x] Added support for the `.displayInline` menu option
+- [x] Added compatibility with dark mode
+- [x] Fixed scrolling issues during selection
+- [x] Fixed multiple actions triggering simultaneously
+- [ ] Added support for UIDeferredMenuElement (Contributions Welcome!)
 
 ## Requirements
 
 - iOS 15.0 or later
 - macCatalyst 15.0 or later
-
----
 
 ## Usage
 
