@@ -40,11 +40,7 @@ extension ChidoriMenu {
             selectionStyle = .none
             accessibilityTraits = [.button]
 
-            preservesSuperviewLayoutMargins = false
-            separatorInset = UIEdgeInsets.zero
-            layoutMargins = UIEdgeInsets.zero
-
-            menuTitleLabel.font = UIFont.systemFont(ofSize: 17.0, weight: .regular)
+            menuTitleLabel.font = UIFont.preferredFont(forTextStyle: .body)
             menuTitleLabel.translatesAutoresizingMaskIntoConstraints = false
             menuTitleLabel.numberOfLines = 0
             iconImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -81,14 +77,21 @@ extension ChidoriMenu {
         @available(*, unavailable)
         required init?(coder _: NSCoder) { fatalError("\(#file) does not implement coder.") }
 
+        override func layoutSubviews() {
+            super.layoutSubviews()
+            preservesSuperviewLayoutMargins = false
+            separatorInset = UIEdgeInsets.zero
+            layoutMargins = UIEdgeInsets.zero
+        }
+
         override func setSelected(_ selected: Bool, animated: Bool) {
             super.setSelected(selected, animated: animated)
-            backgroundColor = selected ? Self.darkColor : .clear
+            backgroundColor = selected ? Self.highlightCoverColor : .clear
         }
 
         override func setHighlighted(_ highlighted: Bool, animated: Bool) {
             super.setSelected(highlighted, animated: animated)
-            backgroundColor = highlighted ? Self.darkColor : .clear
+            backgroundColor = highlighted ? Self.highlightCoverColor : .clear
         }
     }
 
@@ -125,6 +128,10 @@ extension ChidoriMenu {
         @available(*, unavailable)
         required init?(coder _: NSCoder) {
             fatalError()
+        }
+
+        override func layoutSubviews() {
+            super.layoutSubviews()
         }
     }
 }

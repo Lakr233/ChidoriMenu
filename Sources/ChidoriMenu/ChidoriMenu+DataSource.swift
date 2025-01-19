@@ -33,29 +33,45 @@ extension ChidoriMenu {
     }
 }
 
+extension ChidoriMenu.MenuContent {
+    var description: String {
+        switch content {
+        case let .action(action):
+            "action: \(action.title)"
+        case let .submenu(menu):
+            "submenu: \(menu.title)"
+        }
+    }
+}
+
 extension ChidoriMenu {
     typealias DataSource = UITableViewDiffableDataSource<MenuSection, MenuContent>
     typealias Snapshot = NSDiffableDataSourceSnapshot<MenuSection, MenuContent>
 
     func updateSnapshot() {
-        var snapshot = dataSource.snapshot()
-        snapshot.deleteAllItems()
-        snapshot = flatMap(snapshot: snapshot, menu: menu)
+        var snapshot = Snapshot()
+        let contents = flatMap(menu: menu)
+        for (section, items) in contents {
+            snapshot.appendSections([section])
+            snapshot.appendItems(items, toSection: section)
+        }
         dataSource.apply(snapshot, animatingDifferences: false)
     }
 
-    func flatMap(snapshot: Snapshot, menu: UIMenu) -> Snapshot {
-        var snapshot = snapshot // mutable copy
+    func flatMap(menu: UIMenu) -> [(MenuSection, [MenuContent])] {
+        var result: [(MenuSection, [MenuContent])] = []
 
         var sectionTitle: String = menu.title
         var sectionBuilder: [MenuContent] = []
 
         let sectionBuilderCommit = {
-            defer { sectionTitle = "" } // clear
+            defer {
+                sectionTitle = ""
+                sectionBuilder = []
+            }
             guard !sectionBuilder.isEmpty else { return }
             let section = MenuSection(title: sectionTitle)
-            snapshot.appendSections([section])
-            snapshot.appendItems(sectionBuilder, toSection: section)
+            result.append((section, sectionBuilder))
         }
 
         for element in menu.children {
@@ -65,7 +81,10 @@ extension ChidoriMenu {
             }
             if let childMenu = element as? UIMenu {
                 if childMenu.options.contains(.displayInline) {
-                    snapshot = flatMap(snapshot: snapshot, menu: childMenu)
+                    sectionBuilderCommit()
+                    for (section, items) in flatMap(menu: childMenu) {
+                        result.append((section, items))
+                    }
                     continue
                 }
                 sectionBuilder.append(.init(content: .submenu(childMenu)))
@@ -79,28 +98,22 @@ extension ChidoriMenu {
         }
         sectionBuilderCommit()
 
-        return snapshot
+        return result
     }
 
     func executeAction(_ indexPath: IndexPath) {
         guard let action = dataSource.itemIdentifier(for: indexPath) else { return }
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
-
+        for indexPath in tableView.indexPathsForSelectedRows ?? [] {
+            tableView.deselectRow(at: indexPath, animated: true)
+        }
         let content = action.content
         switch content {
         case let .action(action):
             action.execute()
             dismissToRoot()
         case let .submenu(menu):
-            var summonPoint: CGPoint?
-            if let window = cell.window {
-                let boundsCenter: CGPoint = .init(
-                    x: cell.bounds.minX,
-                    y: cell.bounds.midY
-                )
-                summonPoint = cell.convert(boundsCenter, to: window)
-            }
-            cell.present(menu: menu, summonPoint: summonPoint)
+            cell.present(menu: menu)
         }
     }
 

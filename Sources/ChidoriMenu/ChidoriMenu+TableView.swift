@@ -11,7 +11,7 @@ extension ChidoriMenu: UITableViewDelegate {
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         if section == tableView.numberOfSections - 1 { return nil }
         let footerView = UIView(frame: .zero)
-        footerView.backgroundColor = UIColor.black.withAlphaComponent(0.1)
+        footerView.backgroundColor = ChidoriMenu.dimmingSectionSepratorColor
         return footerView
     }
 

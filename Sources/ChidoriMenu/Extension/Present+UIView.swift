@@ -8,11 +8,11 @@
 import UIKit
 
 public extension UIView {
-    func present(menu: UIMenu, summonPoint: CGPoint? = nil) {
+    func present(menu: UIMenu, anchorPoint: CGPoint? = nil) {
         guard let presenter = parentViewController else { return }
         let chidoriMenu = ChidoriMenu(
             menu: menu,
-            summonPoint: summonPoint ?? convert(.init(
+            anchorPoint: anchorPoint ?? convert(.init(
                 x: bounds.midX,
                 y: bounds.midY
             ), to: window)

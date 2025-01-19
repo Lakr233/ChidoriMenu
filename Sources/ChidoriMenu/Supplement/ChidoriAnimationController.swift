@@ -103,7 +103,7 @@ class ChidoriAnimationController: NSObject, ChidoriDelegateProtocol {
         // Accomplish this by finding out how far we have to translate it by creating a reference point from the center of the menu we're moving, and compare that to the center point of where we're moving it to (we're moving it to a specific coordinate, not a frame, so the center point is the same as the coordinate)
         let translationRequired = calculateTranslationRequired(
             forChidoriMenuFrame: finalFrame,
-            toDesiredPoint: menu.summonPoint
+            toDesiredPoint: menu.anchorPoint
         )
 
         let initialAlpha: CGFloat = isPresenting ? 0.0 : 1.0

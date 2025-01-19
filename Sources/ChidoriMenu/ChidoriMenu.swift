@@ -12,7 +12,7 @@ class ChidoriMenu: UIViewController {
     let dataSource: DataSource
 
     let menu: UIMenu
-    let summonPoint: CGPoint
+    let anchorPoint: CGPoint
     let useDimmingView: Bool
 
     let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .systemMaterial))
@@ -30,12 +30,12 @@ class ChidoriMenu: UIViewController {
         ).height.rounded(.up)
     }
 
-    init(menu: UIMenu, summonPoint: CGPoint, useDimmingView: Bool = true) {
+    required init(menu: UIMenu, anchorPoint: CGPoint, useDimmingView: Bool = true) {
         self.menu = menu
-        self.summonPoint = summonPoint
+        self.anchorPoint = anchorPoint
         self.useDimmingView = useDimmingView
 
-        tableView = .init(frame: .zero, style: .plain)
+        tableView = TableView(frame: .zero, style: .plain)
         dataSource = Self.createDataSource(tableView: tableView)
 
         tableView.register(Cell.self, forCellReuseIdentifier: String(describing: Cell.self))
@@ -48,9 +48,9 @@ class ChidoriMenu: UIViewController {
     }
 
     @available(*, unavailable)
-    required init?(coder _: NSCoder) { fatalError() }
+    public required init?(coder _: NSCoder) { fatalError() }
 
-    override func viewDidLoad() {
+    override public func viewDidLoad() {
         super.viewDidLoad()
 
         view.backgroundColor = .clear
@@ -73,6 +73,7 @@ class ChidoriMenu: UIViewController {
         view.addSubview(blurView)
 
         tableView.separatorInset = .zero
+        tableView.contentInset = .init(top: -1, left: 0, bottom: 0, right: 0)
         tableView.delegate = self
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.backgroundColor = .clear
