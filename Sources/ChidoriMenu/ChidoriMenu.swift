@@ -20,6 +20,7 @@ class ChidoriMenu: UIViewController {
     let panGestureRecognizer: UIPanGestureRecognizer = .init()
 
     var transitionController: ChidoriAnimationController?
+    var shouldDismissWithSubmenu: Bool = false
     var height: CGFloat {
         tableView.sizeThatFits(
             CGSize(
@@ -143,10 +144,12 @@ class ChidoriMenu: UIViewController {
     }
 
     override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
-        if let superController = presentingViewController as? ChidoriMenu {
-            superController.backingScale = 1.0
+        let superController = presentingViewController as? ChidoriMenu
+        superController?.backingScale = 1.0
+        super.dismiss(animated: flag) {
+            completion?()
+            if self.shouldDismissWithSubmenu { superController?.dismiss(animated: true) }
         }
-        super.dismiss(animated: flag, completion: completion)
     }
 
     func dismissIfEmpty() {
@@ -158,11 +161,11 @@ class ChidoriMenu: UIViewController {
         dismiss(animated: true)
     }
 
-    func dismissToRoot() {
-        var popper: UIViewController? = self
-        while let controller = popper as? ChidoriMenu {
-            popper = controller.presentingViewController
-            controller.dismiss(animated: true)
+    func iterateMenusInStack(_ executing: @escaping (ChidoriMenu) -> Void) {
+        var parent: ChidoriMenu? = self
+        while let currentParent = parent {
+            executing(currentParent)
+            parent = currentParent.presentingViewController as? ChidoriMenu
         }
     }
 }

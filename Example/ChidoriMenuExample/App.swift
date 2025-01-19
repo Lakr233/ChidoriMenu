@@ -79,20 +79,6 @@ struct Content: UIViewControllerRepresentable {
             ) { _ in
                 SPIndicatorView(title: "Copied", preset: .done).present()
             },
-            UIAction(
-                title: "Paste",
-                image: UIImage(systemName: "doc.on.doc"),
-                attributes: .disabled
-            ) { _ in
-                SPIndicatorView(title: "Pasted", preset: .done).present()
-            },
-            UIAction(
-                title: "Delete",
-                image: UIImage(systemName: "trash"),
-                attributes: .destructive
-            ) { _ in
-                SPIndicatorView(title: "Delete", preset: .done).present()
-            },
             UIMenu(
                 title: "Child Menu",
                 children: [
@@ -102,20 +88,17 @@ struct Content: UIViewControllerRepresentable {
                     ) { _ in
                         SPIndicatorView(title: "Copied", preset: .done).present()
                     },
-                    UIAction(
-                        title: "Paste",
-                        image: UIImage(systemName: "doc.on.doc"),
-                        attributes: .disabled
-                    ) { _ in
-                        SPIndicatorView(title: "Pasted", preset: .done).present()
-                    },
-                    UIAction(
-                        title: "Delete",
-                        image: UIImage(systemName: "trash"),
-                        attributes: .destructive
-                    ) { _ in
-                        SPIndicatorView(title: "Delete", preset: .done).present()
-                    },
+                    UIMenu(
+                        title: "Child Menu",
+                        children: [
+                            UIAction(
+                                title: "Copy",
+                                image: UIImage(systemName: "doc.on.doc")
+                            ) { _ in
+                                SPIndicatorView(title: "Copied", preset: .done).present()
+                            },
+                        ]
+                    ),
                 ]
             ),
             UIMenu(

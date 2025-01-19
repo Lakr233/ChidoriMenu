@@ -111,13 +111,14 @@ extension ChidoriMenu {
         switch content {
         case let .action(action):
             action.execute()
-            dismissToRoot()
+            iterateMenusInStack { $0.shouldDismissWithSubmenu = true }
+            dismiss(animated: true)
         case let .submenu(menu):
             cell.present(menu: menu, anchorPoint: .init(
                 x: cell.convert(cell.bounds, to: cell.window ?? .init()).midX,
                 y: cell.convert(.zero, to: cell.window ?? .init()).minY - ChidoriMenu.offsetY
             ))
-            backingScale = 0.95
+            iterateMenusInStack { $0.backingScale *= 0.95 }
         }
     }
 
