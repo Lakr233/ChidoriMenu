@@ -81,8 +81,9 @@ class ChidoriAnimationController: NSObject, ChidoriDelegateProtocol {
 
         let propertyAnimator = UIViewPropertyAnimator(
             duration: transitionDuration(using: context),
-            dampingRatio: 0.75
+            dampingRatio: 0.85
         )
+
         propertyAnimator.isInterruptible = true
         propertyAnimator.isUserInteractionEnabled = true
 
@@ -112,11 +113,12 @@ class ChidoriAnimationController: NSObject, ChidoriDelegateProtocol {
         let transform = CGAffineTransform(
             translationX: translationRequired.dx,
             y: translationRequired.dy
-        ).scaledBy(x: 0.25, y: 0.05)
+        ).scaledBy(x: 0.95, y: 0.95)
         let initialTransform = isPresenting ? transform : .identity
         let finalTransform = isPresenting ? .identity : transform
 
         menu.view.transform = initialTransform
+            .concatenating(menu.view.transform)
         menu.view.alpha = initialAlpha
 
         propertyAnimator.addAnimations {
@@ -134,17 +136,9 @@ class ChidoriAnimationController: NSObject, ChidoriDelegateProtocol {
     }
 
     private func calculateTranslationRequired(
-        forChidoriMenuFrame chidoriMenuFrame: CGRect,
-        toDesiredPoint desiredPoint: CGPoint
+        forChidoriMenuFrame _: CGRect,
+        toDesiredPoint _: CGPoint
     ) -> CGVector {
-        let centerPointOfMenuView = CGPoint(
-            x: chidoriMenuFrame.origin.x + (chidoriMenuFrame.width / 2),
-            y: chidoriMenuFrame.origin.y + (chidoriMenuFrame.height / 2)
-        )
-        let translationRequired = CGVector(
-            dx: desiredPoint.x - centerPointOfMenuView.x,
-            dy: desiredPoint.y - centerPointOfMenuView.y
-        )
-        return translationRequired
+        .init(dx: 0, dy: -ChidoriMenu.offsetY)
     }
 }

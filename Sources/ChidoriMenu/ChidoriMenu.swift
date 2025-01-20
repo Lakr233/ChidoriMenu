@@ -14,12 +14,11 @@ class ChidoriMenu: UIViewController {
     let menu: UIMenu
     let anchorPoint: CGPoint
 
-    let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .systemMaterial))
+    let backgroundView = UIView()
     let shadowView = UIView()
     let panGestureRecognizer: UIPanGestureRecognizer = .init()
 
     var transitionController: ChidoriAnimationController?
-    var shouldDismissWithSubmenu: Bool = false
     var height: CGFloat {
         tableView.sizeThatFits(
             CGSize(
@@ -27,6 +26,14 @@ class ChidoriMenu: UIViewController {
                 height: CGFloat.greatestFiniteMagnitude
             )
         ).height.rounded(.up)
+    }
+
+    var presentingParent: UIViewController? {
+        var parent: UIViewController? = presentingViewController
+        while let superMenu = parent as? ChidoriMenu {
+            parent = superMenu.presentingViewController
+        }
+        return parent
     }
 
     var menuStackScaleFactor: CGFloat = 1.0 {
@@ -76,10 +83,11 @@ class ChidoriMenu: UIViewController {
         shadowView.layer.cornerCurve = .continuous
         view.addSubview(shadowView)
 
-        blurView.layer.masksToBounds = true
-        blurView.layer.cornerRadius = ChidoriMenu.cornerRadius
-        blurView.layer.cornerCurve = .continuous
-        view.addSubview(blurView)
+        backgroundView.backgroundColor = .systemBackground
+        backgroundView.layer.masksToBounds = true
+        backgroundView.layer.cornerRadius = ChidoriMenu.cornerRadius
+        backgroundView.layer.cornerCurve = .continuous
+        view.addSubview(backgroundView)
 
         tableView.separatorInset = .zero
         tableView.contentInset = .zero
@@ -97,7 +105,7 @@ class ChidoriMenu: UIViewController {
             bottom: ChidoriMenu.cornerRadius,
             right: 0.0
         )
-        blurView.contentView.addSubview(tableView)
+        backgroundView.addSubview(tableView)
 
         tableView.estimatedSectionHeaderHeight = 0.0
         tableView.estimatedRowHeight = 0.0
@@ -121,8 +129,8 @@ class ChidoriMenu: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-        blurView.frame = view.bounds
-        let contentFrame = blurView.contentView.bounds
+        backgroundView.frame = view.bounds
+        let contentFrame = backgroundView.bounds
         tableView.frame = .init(
             x: contentFrame.minX,
             y: contentFrame.minY + 1,
@@ -148,10 +156,7 @@ class ChidoriMenu: UIViewController {
     override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
         let superController = presentingViewController as? ChidoriMenu
         superController?.menuStackScaleFactor = 1.0
-        super.dismiss(animated: flag) {
-            completion?()
-            if self.shouldDismissWithSubmenu { superController?.dismiss(animated: true) }
-        }
+        super.dismiss(animated: flag, completion: completion)
     }
 
     func dismissIfEmpty() {

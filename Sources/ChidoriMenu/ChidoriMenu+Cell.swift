@@ -10,19 +10,19 @@ import UIKit
 extension ChidoriMenu {
     class Cell: UITableViewCell {
         var menuTitle: String = "" {
-            didSet { menuTitleLabel.text = menuTitle }
+            didSet { textLabel?.text = menuTitle }
         }
 
         var isDestructive: Bool = false {
             didSet {
                 let color: UIColor = isDestructive ? .systemRed : .label
-                menuTitleLabel.textColor = color
-                iconImageView.tintColor = color
+                textLabel?.textColor = color
+                imageView?.tintColor = color
             }
         }
 
         var iconImage: UIImage? {
-            didSet { iconImageView.image = iconImage }
+            didSet { imageView?.image = iconImage }
         }
 
         override var accessibilityHint: String? {
@@ -30,48 +30,14 @@ extension ChidoriMenu {
             set { super.accessibilityHint = newValue }
         }
 
-        private let stackView: UIStackView = .init()
-        private let menuTitleLabel: UILabel = .init()
-        private let iconImageView: UIImageView = .init()
-
         override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
             super.init(style: style, reuseIdentifier: reuseIdentifier)
             backgroundColor = .clear
             selectionStyle = .none
             accessibilityTraits = [.button]
-
-            menuTitleLabel.font = UIFont.preferredFont(forTextStyle: .body)
-            menuTitleLabel.translatesAutoresizingMaskIntoConstraints = false
-            menuTitleLabel.numberOfLines = 0
-            iconImageView.translatesAutoresizingMaskIntoConstraints = false
-            contentView.addSubview(menuTitleLabel)
-            contentView.addSubview(iconImageView)
-
-            NSLayoutConstraint.activate([
-                contentView.leadingAnchor.constraint(
-                    equalTo: menuTitleLabel.leadingAnchor,
-                    constant: -Self.horizontalPadding
-                ),
-                contentView.topAnchor.constraint(
-                    equalTo: menuTitleLabel.topAnchor,
-                    constant: -Self.verticalPadding
-                ),
-                contentView.bottomAnchor.constraint(
-                    equalTo: menuTitleLabel.bottomAnchor,
-                    constant: Self.verticalPadding
-                ),
-                menuTitleLabel.trailingAnchor.constraint(
-                    equalTo: iconImageView.leadingAnchor,
-                    constant: Self.titleToIconMinSpacing
-                ),
-                contentView.trailingAnchor.constraint(
-                    equalTo: iconImageView.centerXAnchor,
-                    constant: Self.iconTrailingOffset
-                ),
-                contentView.centerYAnchor.constraint(
-                    equalTo: iconImageView.centerYAnchor
-                ),
-            ])
+            textLabel?.textColor = .label
+            imageView?.contentMode = .scaleAspectFit
+            imageView?.tintColor = .label
         }
 
         @available(*, unavailable)
@@ -79,6 +45,15 @@ extension ChidoriMenu {
 
         override func layoutSubviews() {
             super.layoutSubviews()
+            removeInsetOnSeparator()
+        }
+
+        override func prepareForReuse() {
+            super.prepareForReuse()
+            removeInsetOnSeparator()
+        }
+
+        func removeInsetOnSeparator() {
             preservesSuperviewLayoutMargins = false
             separatorInset = UIEdgeInsets.zero
             layoutMargins = UIEdgeInsets.zero

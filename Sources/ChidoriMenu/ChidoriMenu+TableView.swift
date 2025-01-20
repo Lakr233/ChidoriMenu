@@ -17,7 +17,7 @@ extension ChidoriMenu: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         if section == tableView.numberOfSections - 1 { return 0 }
-        return 8
+        return ChidoriMenu.dimmingSectionSepratorHeight
     }
 
     func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {

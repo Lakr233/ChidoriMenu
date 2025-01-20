@@ -9,19 +9,22 @@ import UIKit
 
 extension ChidoriMenu {
     static let width: CGFloat = 256
-    static let cornerRadius: CGFloat = 14
-    static let shadowRadius: CGFloat = 24
-    static let sectionTopPadding: CGFloat = 8
-    static let offsetY: CGFloat = 16
+    static let cornerRadius: CGFloat = 16
+    static let shadowRadius: CGFloat = cornerRadius
+    static let sectionTopPadding: CGFloat = 6
+    static let offsetY: CGFloat = 10
 
-    static let dimmingBackgroundColor = UIColor.black.withAlphaComponent(0.2)
+    static let dimmingBackgroundColor = UIColor.black.withAlphaComponent(0.1)
     static let dimmingSectionSepratorColor = UIColor.black.withAlphaComponent(0.1)
+    static let dimmingSectionSepratorHeight: CGFloat = 4
+
+    static let stackScaleFactor: CGFloat = 0.05
 }
 
 extension ChidoriMenu.Cell {
-    static let horizontalPadding: CGFloat = 12
-    static let verticalPadding: CGFloat = 12.0
-    static let iconTrailingOffset: CGFloat = 24.0
-    static let titleToIconMinSpacing: CGFloat = -16.0
+    static let horizontalPadding: CGFloat = 10
+    static let verticalPadding: CGFloat = 10
+    static let iconTrailingOffset: CGFloat = 20
+    static let titleToIconMinSpacing: CGFloat = -10
     static let highlightCoverColor = UIColor.black.withAlphaComponent(0.05)
 }
