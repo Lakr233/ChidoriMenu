@@ -80,13 +80,17 @@ class ChidoriMenu: UIViewController {
         view.backgroundColor = .clear
         view.layer.masksToBounds = false
 
-        shadowView.backgroundColor = ChidoriMenu.dimmingBackgroundColor
-        shadowView.layer.shadowOpacity = 0.25
+        shadowView.backgroundColor = .systemBackground
+        shadowView.layer.shadowColor = UIColor { provider in
+            switch provider.userInterfaceStyle {
+            case .dark: UIColor.black.withAlphaComponent(0.25)
+            default: UIColor.black.withAlphaComponent(0.1)
+            }
+        }.cgColor
+        shadowView.layer.shadowOpacity = 1
         shadowView.layer.shadowOffset = .zero
-        shadowView.layer.shadowColor = UIColor.black.cgColor
         shadowView.layer.shadowRadius = 8
         shadowView.layer.cornerRadius = ChidoriMenu.cornerRadius
-        shadowView.layer.cornerCurve = .continuous
         view.addSubview(shadowView)
 
         backgroundView.backgroundColor = .systemBackground
@@ -150,7 +154,7 @@ class ChidoriMenu: UIViewController {
                 x: 0,
                 y: 0,
                 width: ChidoriMenu.width,
-                height: height
+                height: tableView.frame.height
             ),
             cornerRadius: ChidoriMenu.cornerRadius
         ).cgPath
