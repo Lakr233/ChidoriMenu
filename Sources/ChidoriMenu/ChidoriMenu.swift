@@ -9,7 +9,7 @@ import UIKit
 
 class ChidoriMenu: UIViewController {
     let tableView: UITableView
-    let dataSource: DataSource
+    var dataSource: DataSource!
 
     let menu: UIMenu
     let anchorPoint: CGPoint
@@ -54,12 +54,18 @@ class ChidoriMenu: UIViewController {
         self.anchorPoint = anchorPoint
 
         tableView = TableView(frame: .zero, style: .plain)
-        dataSource = Self.createDataSource(tableView: tableView)
 
         tableView.register(Cell.self, forCellReuseIdentifier: String(describing: Cell.self))
         tableView.dataSource = dataSource
 
         super.init(nibName: nil, bundle: nil)
+
+        dataSource = DataSource(
+            tableView: tableView
+        ) { [weak self] _, indexPath, _ -> UITableViewCell? in
+            guard let self else { return nil }
+            return cell(forRowAtIndex: indexPath, dataSource: dataSource)
+        }
 
         modalPresentationStyle = .custom
         transitioningDelegate = self
@@ -75,7 +81,7 @@ class ChidoriMenu: UIViewController {
         view.layer.masksToBounds = false
 
         shadowView.backgroundColor = ChidoriMenu.dimmingBackgroundColor
-        shadowView.layer.shadowOpacity = 0.1
+        shadowView.layer.shadowOpacity = 0.25
         shadowView.layer.shadowOffset = .zero
         shadowView.layer.shadowColor = UIColor.black.cgColor
         shadowView.layer.shadowRadius = 8
@@ -131,9 +137,10 @@ class ChidoriMenu: UIViewController {
 
         backgroundView.frame = view.bounds
         let contentFrame = backgroundView.bounds
+        tableView.separatorStyle = .none
         tableView.frame = .init(
             x: contentFrame.minX,
-            y: contentFrame.minY + 1,
+            y: contentFrame.minY,
             width: contentFrame.width,
             height: contentFrame.height
         )

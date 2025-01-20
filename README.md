@@ -8,7 +8,7 @@ This project draws heavily on code from [ChidoriMenu](https://github.com/christi
 
 ## Preview
 
-![Screenshot](<./Resources/Simulator%20Screenshot%20-%20iPhone%20SE%20(3rd%20generation)%20-%202025-01-20%20at%2000.48.33.jpeg>)
+![Screenshot](./Resources/IMG_4262.JPG)
 
 ## Features
 

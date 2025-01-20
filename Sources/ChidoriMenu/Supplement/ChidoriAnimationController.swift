@@ -79,9 +79,13 @@ class ChidoriAnimationController: NSObject, ChidoriDelegateProtocol {
     ) -> UIViewImplicitlyAnimating {
         if let animator { return animator }
 
+        let duration = transitionDuration(using: context)
         let propertyAnimator = UIViewPropertyAnimator(
-            duration: transitionDuration(using: context),
-            dampingRatio: 0.85
+            duration: duration,
+            timingParameters: UISpringTimingParameters(
+                dampingRatio: 0.8,
+                initialVelocity: .init(dx: 0.8, dy: 0.8)
+            )
         )
 
         propertyAnimator.isInterruptible = true
@@ -100,11 +104,9 @@ class ChidoriAnimationController: NSObject, ChidoriDelegateProtocol {
         let finalFrame = context.finalFrame(for: menu)
         menu.view.frame = finalFrame
 
-        // Rather than moving the origin of the view's frame for the animation (which is causing issues with jumpiness), just translate the view temporarily.
-        // Accomplish this by finding out how far we have to translate it by creating a reference point from the center of the menu we're moving, and compare that to the center point of where we're moving it to (we're moving it to a specific coordinate, not a frame, so the center point is the same as the coordinate)
-        let translationRequired = calculateTranslationRequired(
-            forChidoriMenuFrame: finalFrame,
-            toDesiredPoint: menu.anchorPoint
+        let translationRequired: CGVector = .init(
+            dx: 0,
+            dy: menu.view.frame.height * -0.1
         )
 
         let initialAlpha: CGFloat = isPresenting ? 0.0 : 1.0
@@ -113,7 +115,7 @@ class ChidoriAnimationController: NSObject, ChidoriDelegateProtocol {
         let transform = CGAffineTransform(
             translationX: translationRequired.dx,
             y: translationRequired.dy
-        ).scaledBy(x: 0.95, y: 0.95)
+        ).scaledBy(x: 0.9, y: 0.9)
         let initialTransform = isPresenting ? transform : .identity
         let finalTransform = isPresenting ? .identity : transform
 
@@ -133,12 +135,5 @@ class ChidoriAnimationController: NSObject, ChidoriDelegateProtocol {
 
         animator = propertyAnimator
         return propertyAnimator
-    }
-
-    private func calculateTranslationRequired(
-        forChidoriMenuFrame _: CGRect,
-        toDesiredPoint _: CGPoint
-    ) -> CGVector {
-        .init(dx: 0, dy: -ChidoriMenu.offsetY)
     }
 }

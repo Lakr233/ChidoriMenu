@@ -110,7 +110,6 @@ class ChidoriPresentationController: UIPresentationController {
                 - minimalEdgeInset
                 - containerView.safeAreaInsets.bottom
                 - menuSize.height
-
         }()
 
         return CGPoint(x: x, y: y)

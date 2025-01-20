@@ -118,35 +118,8 @@ extension ChidoriMenu {
                 y: cell.convert(.zero, to: cell.window ?? .init()).minY - ChidoriMenu.offsetY
             ))
             iterateMenusInStack {
-                $0.menuStackScaleFactor -= ChidoriMenu.stackScaleFactor
+                $0.menuStackScaleFactor *= 1 - ChidoriMenu.stackScaleFactor
             }
         }
-    }
-
-    static func createDataSource(tableView: UITableView) -> DataSource {
-        let dataSource = DataSource(
-            tableView: tableView
-        ) { tableView, indexPath, item -> UITableViewCell? in
-            let cell = tableView.dequeueReusableCell(
-                withIdentifier: String(describing: Cell.self),
-                for: indexPath
-            ) as! Cell
-            switch item.content {
-            case let .action(action):
-                cell.menuTitle = action.title
-                cell.iconImage = action.image
-                cell.isDestructive = action.attributes.contains(.destructive)
-                cell.accessoryType = .none
-                cell.accessoryView?.tintColor = .label
-            case let .submenu(menu):
-                cell.menuTitle = menu.title
-                cell.iconImage = menu.image
-                cell.isDestructive = false
-                cell.accessoryType = .disclosureIndicator
-                cell.accessoryView?.tintColor = .label
-            }
-            return cell
-        }
-        return dataSource
     }
 }

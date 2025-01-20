@@ -53,21 +53,24 @@ struct Content: UIViewControllerRepresentable {
         var firstMenu: Menu = .init(title: "Show Menu Set", menu: .init(children: [
             UIAction(
                 title: "Copy",
-                image: UIImage(systemName: "doc.on.doc")
+                image: UIImage(systemName: "doc.on.doc"),
+                state: .on
             ) { _ in
                 SPIndicatorView(title: "Copied", preset: .done).present()
             },
             UIAction(
                 title: "Paste",
                 image: UIImage(systemName: "doc.on.doc"),
-                attributes: .disabled
+                attributes: .disabled,
+                state: .off
             ) { _ in
                 SPIndicatorView(title: "Pasted", preset: .done).present()
             },
             UIAction(
                 title: "Delete",
                 image: UIImage(systemName: "trash"),
-                attributes: .destructive
+                attributes: .destructive,
+                state: .mixed
             ) { _ in
                 SPIndicatorView(title: "Delete", preset: .done).present()
             },
@@ -76,12 +79,14 @@ struct Content: UIViewControllerRepresentable {
         var secondMenu: Menu = .init(title: "Show Nested Menu Set", menu: .init(title: "Root Menu", children: [
             UIAction(
                 title: "Copy",
-                image: UIImage(systemName: "doc.on.doc")
+                image: UIImage(systemName: "doc.on.doc"),
+                state: .on
             ) { _ in
                 SPIndicatorView(title: "Copied", preset: .done).present()
             },
             UIMenu(
                 title: "Child Menu",
+                image: .init(systemName: "menucard"),
                 children: [
                     UIAction(
                         title: "Copy",
@@ -91,6 +96,7 @@ struct Content: UIViewControllerRepresentable {
                     },
                     UIMenu(
                         title: "Child Menu",
+                        image: .init(systemName: "menucard"),
                         children: [
                             UIAction(
                                 title: "Copy",

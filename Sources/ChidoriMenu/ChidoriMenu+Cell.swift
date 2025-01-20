@@ -30,6 +30,8 @@ extension ChidoriMenu {
             set { super.accessibilityHint = newValue }
         }
 
+        let sep = UIView()
+
         override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
             super.init(style: style, reuseIdentifier: reuseIdentifier)
             backgroundColor = .clear
@@ -38,25 +40,25 @@ extension ChidoriMenu {
             textLabel?.textColor = .label
             imageView?.contentMode = .scaleAspectFit
             imageView?.tintColor = .label
-        }
-
-        @available(*, unavailable)
-        required init?(coder _: NSCoder) { fatalError("\(#file) does not implement coder.") }
-
-        override func layoutSubviews() {
-            super.layoutSubviews()
-            removeInsetOnSeparator()
-        }
-
-        override func prepareForReuse() {
-            super.prepareForReuse()
-            removeInsetOnSeparator()
-        }
-
-        func removeInsetOnSeparator() {
+            accessoryView?.isUserInteractionEnabled = false
             preservesSuperviewLayoutMargins = false
             separatorInset = UIEdgeInsets.zero
             layoutMargins = UIEdgeInsets.zero
+            sep.backgroundColor = ChidoriMenu.dimmingSectionSepratorColor
+            contentView.addSubview(sep)
+        }
+
+        @available(*, unavailable)
+        required init?(coder _: NSCoder) { fatalError() }
+
+        override func layoutSubviews() {
+            super.layoutSubviews()
+            sep.frame = .init(
+                x: 0,
+                y: 0,
+                width: bounds.width,
+                height: 1
+            )
         }
 
         override func setSelected(_ selected: Bool, animated: Bool) {
@@ -87,11 +89,11 @@ extension ChidoriMenu {
             NSLayoutConstraint.activate([
                 titleLabel.leadingAnchor.constraint(
                     equalTo: leadingAnchor,
-                    constant: ChidoriMenu.Cell.horizontalPadding
+                    constant: 8
                 ),
                 titleLabel.trailingAnchor.constraint(
                     equalTo: trailingAnchor,
-                    constant: -ChidoriMenu.Cell.horizontalPadding
+                    constant: -8
                 ),
                 titleLabel.centerYAnchor.constraint(
                     equalTo: centerYAnchor,

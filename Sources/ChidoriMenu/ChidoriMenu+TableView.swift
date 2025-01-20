@@ -8,6 +8,40 @@
 import UIKit
 
 extension ChidoriMenu: UITableViewDelegate {
+    func cell(forRowAtIndex indexPath: IndexPath, dataSource: DataSource) -> UITableViewCell? {
+        guard let section = dataSource.sectionIdentifier(for: indexPath.section),
+              let item = dataSource.itemIdentifier(for: indexPath)
+        else { return nil }
+        let cell = tableView.dequeueReusableCell(
+            withIdentifier: String(describing: Cell.self),
+            for: indexPath
+        ) as! Cell
+        switch item.content {
+        case let .action(action):
+            cell.menuTitle = action.title
+            cell.iconImage = action.image
+            cell.isDestructive = action.attributes.contains(.destructive)
+            switch action.state {
+            case .on: cell.accessoryType = .checkmark
+            case .mixed: cell.accessoryType = .detailButton
+            default: cell.accessoryType = .none
+            }
+            cell.accessoryView?.tintColor = .label
+        case let .submenu(menu):
+            cell.menuTitle = menu.title
+            cell.iconImage = menu.image
+            cell.isDestructive = false
+            cell.accessoryType = .disclosureIndicator
+            cell.accessoryView?.tintColor = .label
+        }
+        if section.title.isEmpty, indexPath.row == 0, indexPath.section == 0 {
+            cell.sep.isHidden = true
+        } else {
+            cell.sep.isHidden = false
+        }
+        return cell
+    }
+
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         if section == tableView.numberOfSections - 1 { return nil }
         let footerView = UIView(frame: .zero)
