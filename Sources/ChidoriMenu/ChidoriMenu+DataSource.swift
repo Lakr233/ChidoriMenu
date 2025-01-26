@@ -147,8 +147,9 @@ extension ChidoriMenu {
         let content = action.content
         switch content {
         case let .action(action):
-            action.execute()
-            presentingParent?.dismiss(animated: true)
+            presentingParent?.dismiss(animated: true) {
+                action.execute()
+            }
         case let .submenu(menu):
             cell.present(menu: menu, anchorPoint: .init(
                 x: cell.convert(cell.bounds, to: cell.window ?? .init()).midX,
