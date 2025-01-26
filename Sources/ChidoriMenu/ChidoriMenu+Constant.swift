@@ -8,7 +8,7 @@
 import UIKit
 
 extension ChidoriMenu {
-    static let width: CGFloat = 256
+    static let width: CGFloat = 280
     static let cornerRadius: CGFloat = 14
     static let shadowRadius: CGFloat = cornerRadius
     static let sectionTopPadding: CGFloat = 6

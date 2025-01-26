@@ -343,11 +343,56 @@ struct Content: UIViewControllerRepresentable {
             },
         ]))
 
+        let productionTest: Menu = .init(title: "Production Test", menu: UIMenu(
+            title: NSLocalizedString("Select Model Type", comment: ""),
+            options: [.displayInline],
+            children: [
+                UIMenu(
+                    title: NSLocalizedString("Local Model", comment: ""),
+                    options: [.displayInline, .singleSelection],
+                    children: [
+                        UIAction(title: NSLocalizedString("Hugging Face", comment: "")) { _ in
+                        },
+                        UIAction(title: NSLocalizedString("Model Scope", comment: "")) { _ in
+                        },
+                    ]
+                ),
+                UIMenu(
+                    title: NSLocalizedString("Cloud Model", comment: ""),
+                    options: [.displayInline, .singleSelection],
+                    children: [
+                        UIAction(title: NSLocalizedString("OpenAI API Compatible", comment: "")) { _ in
+                        },
+                        UIMenu(
+                            options: [.displayInline, .singleSelection],
+                            children: [
+                            ]
+                        ),
+                        UIMenu(
+                            title: NSLocalizedString("Well Known Service Providers", comment: ""),
+                            options: [.singleSelection],
+                            children: [
+                                UIAction(title: "OpenAI") { _ in
+                                },
+                                UIAction(title: "OpenRouter") { _ in
+                                },
+                                UIAction(title: "DeepSeek") { _ in
+                                },
+                                UIAction(title: "Groq") { _ in
+                                },
+                            ]
+                        ),
+                    ]
+                ),
+            ]
+        ))
+
         var menuList: [Menu] { [
             firstMenu,
             secondMenu,
             veryLongMenu,
             deferredMenuElement,
+            productionTest,
         ] }
 
         func numberOfSections(in _: UITableView) -> Int {

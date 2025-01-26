@@ -83,9 +83,23 @@ extension ChidoriMenu {
             }
             if let childMenu = element as? UIMenu {
                 if childMenu.options.contains(.displayInline) {
-                    sectionBuilderCommit()
-                    for (section, items) in flatMap(menu: childMenu) {
-                        result.append((section, items))
+                    let title = childMenu.title
+                    if title.isEmpty {
+                        var firstSectionAppended = false
+                        for (section, items) in flatMap(menu: childMenu) {
+                            if firstSectionAppended {
+                                result.append((section, items))
+                            } else {
+                                sectionBuilder.append(contentsOf: items)
+                                firstSectionAppended = true
+                                sectionBuilderCommit()
+                            }
+                        }
+                    } else {
+                        sectionBuilderCommit()
+                        for (section, items) in flatMap(menu: childMenu) {
+                            result.append((section, items))
+                        }
                     }
                     continue
                 }
