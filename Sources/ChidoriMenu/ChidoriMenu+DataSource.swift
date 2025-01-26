@@ -20,7 +20,6 @@ extension ChidoriMenu {
         enum Content {
             case action(UIAction)
             case submenu(UIMenu)
-//            case deferred(([UIMenuElement]) -> ())
         }
 
         func hash(into hasher: inout Hasher) {

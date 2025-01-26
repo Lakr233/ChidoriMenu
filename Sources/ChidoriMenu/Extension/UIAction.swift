@@ -15,6 +15,6 @@ extension UIAction {
         typealias ActionBlock = @convention(block) (UIAction) -> Void
         let blockPtr = UnsafeRawPointer(Unmanaged<AnyObject>.passUnretained(handler as AnyObject).toOpaque())
         let block = unsafeBitCast(blockPtr, to: ActionBlock.self)
-        return block(self)
+        DispatchQueue.main.async { block(self) }
     }
 }
