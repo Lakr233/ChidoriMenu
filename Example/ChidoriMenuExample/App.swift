@@ -386,6 +386,47 @@ struct Content: UIViewControllerRepresentable {
                 ),
             ]
         ))
+        
+        let longTextTest: Menu = .init(title: "Loooong Menu Test", menu: UIMenu(
+            children: [
+                UIMenu(
+                    title: "oooooooooooooooooooooooooooooooooooooooo",
+                    options: [.displayInline, .singleSelection],
+                    children: [
+                        UIAction(title: NSLocalizedString("Hugging Face", comment: "")) { _ in
+                        },
+                        UIAction(title: NSLocalizedString("Model Scope", comment: "")) { _ in
+                        },
+                    ]
+                ),
+                UIMenu(
+                    title: NSLocalizedString("Cloud Model", comment: ""),
+                    options: [.displayInline, .singleSelection],
+                    children: [
+                        UIAction(title: NSLocalizedString("oooooooooooooooooooooooooooooo", comment: "")) { _ in
+                        },
+                        UIMenu(
+                            options: [.displayInline, .singleSelection],
+                            children: [
+                            ]
+                        ),
+                    ]
+                ),
+                UIMenu(
+                    title: NSLocalizedString("oooooooooooooooooooooooooooooo", comment: ""),
+                    children: [
+                        UIAction(title: NSLocalizedString("oooooooooooooooooooooooooooooo", comment: "")) { _ in
+                        },
+                        UIMenu(
+                            options: [.displayInline, .singleSelection],
+                            children: [
+                            ]
+                        ),
+                    ]
+                ),
+            ]
+        ))
+
 
         var menuList: [Menu] { [
             firstMenu,
@@ -393,6 +434,7 @@ struct Content: UIViewControllerRepresentable {
             veryLongMenu,
             deferredMenuElement,
             productionTest,
+            longTextTest,
         ] }
 
         func numberOfSections(in _: UITableView) -> Int {

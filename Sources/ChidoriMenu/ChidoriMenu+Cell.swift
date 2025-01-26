@@ -45,6 +45,7 @@ extension ChidoriMenu {
             separatorInset = UIEdgeInsets.zero
             layoutMargins = UIEdgeInsets.zero
             sep.backgroundColor = ChidoriMenu.dimmingSectionSepratorColor
+            textLabel?.numberOfLines = 0
             contentView.addSubview(sep)
         }
 
