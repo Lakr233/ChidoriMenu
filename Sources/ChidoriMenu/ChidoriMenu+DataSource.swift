@@ -59,22 +59,24 @@ extension ChidoriMenu {
     }
 
     func flatMap(menu: UIMenu) -> [(MenuSection, [MenuContent])] {
+        flatMap(initialTitle: menu.title, menuChildren: menu.children)
+    }
+
+    func flatMap(initialTitle: String = "", menuChildren: [UIMenuElement]) -> [(MenuSection, [MenuContent])] {
         var result: [(MenuSection, [MenuContent])] = []
 
-        var sectionTitle: String = menu.title
+        var sectionTitle: String = initialTitle
         var sectionBuilder: [MenuContent] = []
 
         let sectionBuilderCommit = {
-            defer {
-                sectionTitle = ""
-                sectionBuilder = []
-            }
+            defer { sectionTitle = "" }
+            defer { sectionBuilder = [] }
             guard !sectionBuilder.isEmpty else { return }
             let section = MenuSection(title: sectionTitle)
             result.append((section, sectionBuilder))
         }
 
-        for element in menu.children {
+        for element in menuChildren {
             if let action = element as? UIAction {
                 sectionBuilder.append(.init(content: .action(action)))
                 continue
@@ -91,10 +93,32 @@ extension ChidoriMenu {
                 continue
             }
             if let deferred = element as? UIDeferredMenuElement {
-                // TODO: IMPL
-                assertionFailure("current \(deferred) unsupported")
+                var menuItems: [UIMenuElement] = []
+                var menuItemsWasSet = false
+                let retriever = { (items: [UIMenuElement]) in
+                    menuItemsWasSet = true
+                    menuItems = items
+                }
+                let selector = NSSelectorFromString("elementProvider")
+                guard deferred.responds(to: selector),
+                      let block = deferred.perform(selector)?.takeUnretainedValue()
+                else {
+                    assertionFailure()
+                    continue
+                }
+                typealias ProviderBlock = @convention(block) (([UIMenuElement]) -> Void) -> Void
+                let providerBlock = unsafeBitCast(block, to: ProviderBlock.self)
+                providerBlock(retriever)
+                assert(menuItemsWasSet, "ChidoriMenu does not support async deferred menu elements")
+                guard !menuItems.isEmpty else { continue }
+
+                sectionBuilderCommit()
+                for (section, items) in flatMap(menuChildren: menuItems) {
+                    result.append((section, items))
+                }
+                continue
             }
-            assertionFailure("unknown menu element")
+            assertionFailure()
         }
         sectionBuilderCommit()
 

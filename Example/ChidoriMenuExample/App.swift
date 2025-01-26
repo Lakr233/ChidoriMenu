@@ -311,10 +311,43 @@ struct Content: UIViewControllerRepresentable {
             ),
         ]))
 
+        var deferredMenuElement: Menu = .init(title: "Show UIDeferredMenuElement", menu: .init(children: [
+            UIDeferredMenuElement.uncached {
+                $0([
+                    UIAction(
+                        title: "Hello World",
+                        image: .init(systemName: "wind")
+                    ) { _ in },
+                    UIAction(
+                        title: "UIDeferredMenuElement",
+                        image: .init(systemName: "wind")
+                    ) { _ in },
+                    UIDeferredMenuElement.uncached {
+                        $0([
+                            UIAction(
+                                title: "Hello World",
+                                image: .init(systemName: "wind")
+                            ) { _ in },
+                            UIAction(
+                                title: "Nested",
+                                image: .init(systemName: "wind"),
+                                state: .on
+                            ) { _ in },
+                            UIAction(
+                                title: "UIDeferredMenuElement",
+                                image: .init(systemName: "wind")
+                            ) { _ in },
+                        ])
+                    },
+                ])
+            },
+        ]))
+
         var menuList: [Menu] { [
             firstMenu,
             secondMenu,
             veryLongMenu,
+            deferredMenuElement,
         ] }
 
         func numberOfSections(in _: UITableView) -> Int {
