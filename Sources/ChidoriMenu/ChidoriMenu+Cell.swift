@@ -47,6 +47,16 @@ extension ChidoriMenu {
             sep.backgroundColor = ChidoriMenu.dimmingSectionSepratorColor
             textLabel?.numberOfLines = 0
             contentView.addSubview(sep)
+
+            if let imageView { // just in case
+                imageView.translatesAutoresizingMaskIntoConstraints = false
+                NSLayoutConstraint.activate([
+                    imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
+                    imageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+                    imageView.heightAnchor.constraint(equalToConstant: 20),
+                    imageView.widthAnchor.constraint(equalToConstant: 28),
+                ])
+            }
         }
 
         @available(*, unavailable)

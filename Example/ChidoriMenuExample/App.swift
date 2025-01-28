@@ -386,7 +386,7 @@ struct Content: UIViewControllerRepresentable {
                 ),
             ]
         ))
-        
+
         let longTextTest: Menu = .init(title: "Loooong Menu Test", menu: UIMenu(
             children: [
                 UIMenu(
@@ -426,7 +426,6 @@ struct Content: UIViewControllerRepresentable {
                 ),
             ]
         ))
-
 
         var menuList: [Menu] { [
             firstMenu,
