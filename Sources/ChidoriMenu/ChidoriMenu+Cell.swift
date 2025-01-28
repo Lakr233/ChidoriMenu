@@ -54,6 +54,7 @@ extension ChidoriMenu {
                     imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
                     imageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
                     imageView.heightAnchor.constraint(equalToConstant: 20),
+                    // 44 - left 8 - right 8 = 28
                     imageView.widthAnchor.constraint(equalToConstant: 28),
                 ])
             }
