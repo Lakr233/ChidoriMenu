@@ -12,9 +12,9 @@ public extension UIView {
         guard let presenter = parentViewController else { return }
         let chidoriMenu = ChidoriMenu(
             menu: menu,
-            anchorPoint: anchorPoint ?? convert(.init(
-                x: bounds.midX,
-                y: bounds.midY
+            anchorPoint: convert(.init(
+                x: anchorPoint?.x ?? bounds.midX,
+                y: anchorPoint?.y ?? bounds.midY
             ), to: window)
         )
         presenter.present(chidoriMenu, animated: true) {
