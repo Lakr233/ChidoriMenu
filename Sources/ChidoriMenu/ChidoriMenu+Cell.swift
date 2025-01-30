@@ -22,7 +22,7 @@ extension ChidoriMenu {
         }
 
         var iconImage: UIImage? {
-            didSet { imageView?.image = iconImage }
+            didSet { imageView?.image = iconImage?.cellIcon() }
         }
 
         override var accessibilityHint: String? {
@@ -47,17 +47,6 @@ extension ChidoriMenu {
             sep.backgroundColor = ChidoriMenu.dimmingSectionSepratorColor
             textLabel?.numberOfLines = 0
             contentView.addSubview(sep)
-
-            if let imageView { // just in case
-                imageView.translatesAutoresizingMaskIntoConstraints = false
-                NSLayoutConstraint.activate([
-                    imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
-                    imageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-                    imageView.heightAnchor.constraint(equalToConstant: 20),
-                    // 44 - left 8 - right 8 = 28
-                    imageView.widthAnchor.constraint(equalToConstant: 28),
-                ])
-            }
         }
 
         @available(*, unavailable)
@@ -122,5 +111,11 @@ extension ChidoriMenu {
         override func layoutSubviews() {
             super.layoutSubviews()
         }
+    }
+}
+
+private extension UIImage {
+    func cellIcon() -> UIImage {
+        scale(with: .init(width: 22, height: 22)) ?? self
     }
 }
