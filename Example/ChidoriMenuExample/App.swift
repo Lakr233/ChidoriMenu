@@ -403,7 +403,7 @@ struct Content: UIViewControllerRepresentable {
                     title: NSLocalizedString("Cloud Model", comment: ""),
                     options: [.displayInline, .singleSelection],
                     children: [
-                        UIAction(title: NSLocalizedString("oooooooooooooooooooooooooooooo", comment: "")) { _ in
+                        UIAction(title: NSLocalizedString("oooooooooooooooooooooooooooooo", comment: ""), state: .on) { _ in
                         },
                         UIMenu(
                             options: [.displayInline, .singleSelection],

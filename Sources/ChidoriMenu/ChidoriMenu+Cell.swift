@@ -108,6 +108,8 @@ extension ChidoriMenu {
             iconView.contentMode = .scaleAspectFit
             iconView.tintColor = .label
             iconView.translatesAutoresizingMaskIntoConstraints = false
+            iconView.setContentCompressionResistancePriority(.required, for: .horizontal)
+            iconView.setContentHuggingPriority(.required, for: .horizontal)
             horizontalStackView.addArrangedSubview(iconView)
             NSLayoutConstraint.activate([
                 iconView.widthAnchor.constraint(equalToConstant: 22),
@@ -119,13 +121,14 @@ extension ChidoriMenu {
             titleLabel.textAlignment = .left
             titleLabel.numberOfLines = 0
             titleLabel.translatesAutoresizingMaskIntoConstraints = false
-            titleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
             horizontalStackView.addArrangedSubview(titleLabel)
 
             trailingIconView.contentMode = .scaleAspectFit
             trailingIconView.layer.contentsGravity = .right
             trailingIconView.tintColor = ChidoriMenu.accentColor
             trailingIconView.translatesAutoresizingMaskIntoConstraints = false
+            trailingIconView.setContentCompressionResistancePriority(.required, for: .horizontal)
+            trailingIconView.setContentHuggingPriority(.required, for: .horizontal)
             horizontalStackView.addArrangedSubview(trailingIconView)
             NSLayoutConstraint.activate([
                 trailingIconView.heightAnchor.constraint(equalToConstant: 22),
