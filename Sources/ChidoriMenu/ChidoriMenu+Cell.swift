@@ -86,7 +86,6 @@ extension ChidoriMenu {
 
             iconView.contentMode = .scaleAspectFit
             iconView.tintColor = .label
-            iconView.tintAdjustmentMode = .normal
             iconView.translatesAutoresizingMaskIntoConstraints = false
             contentView.addSubview(iconView)
 
@@ -95,6 +94,8 @@ extension ChidoriMenu {
             titleLabel.textAlignment = .left
             titleLabel.numberOfLines = 0
             titleLabel.translatesAutoresizingMaskIntoConstraints = false
+            titleLabel.minimumScaleFactor = 0.5
+            titleLabel.adjustsFontSizeToFitWidth = true
             contentView.addSubview(titleLabel)
             
             trailingIconView.contentMode = .scaleAspectFit
@@ -106,17 +107,17 @@ extension ChidoriMenu {
             NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(greaterThanOrEqualTo: contentView.topAnchor, constant: 8),
             titleLabel.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -8),
-            titleLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 18),
+            titleLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 22),
             titleLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             
             iconView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
             iconView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            iconView.widthAnchor.constraint(equalToConstant: 18),
-            iconView.heightAnchor.constraint(equalToConstant: 18),
+            iconView.widthAnchor.constraint(equalToConstant: 22),
+            iconView.heightAnchor.constraint(equalToConstant: 22),
             
             trailingIconView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
             trailingIconView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            trailingIconView.heightAnchor.constraint(equalToConstant: 18),
+            trailingIconView.heightAnchor.constraint(equalToConstant: 22),
             ])
             
             setNeedsUpdateConstraints()
