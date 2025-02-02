@@ -57,8 +57,6 @@ class ChidoriMenu: UIViewController {
 
         tableView.register(Cell.self, forCellReuseIdentifier: String(describing: Cell.self))
         tableView.dataSource = dataSource
-        tableView.rowHeight = UITableView.automaticDimension
-        tableView.estimatedRowHeight = UITableView.automaticDimension
 
         super.init(nibName: nil, bundle: nil)
 

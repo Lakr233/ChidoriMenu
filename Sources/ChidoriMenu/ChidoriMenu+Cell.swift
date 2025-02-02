@@ -12,7 +12,7 @@ extension ChidoriMenu {
         var menuTitle: String = "" {
             didSet {
                 titleLabel.text = menuTitle
-                layoutIfNeeded()
+                setNeedsUpdateConstraints()
             }
         }
 
@@ -28,22 +28,26 @@ extension ChidoriMenu {
             didSet {
                 iconView.image = iconImage
                 iconView.isHidden = iconImage == nil
+                setNeedsUpdateConstraints()
             }
         }
 
         var trailingItem: UITableViewCell.AccessoryType = .none {
-            didSet { switch trailingItem {
-            case .disclosureIndicator:
-                trailingIconView.image = UIImage(systemName: "chevron.right")
-            case .detailDisclosureButton:
-                trailingIconView.image = UIImage(systemName: "info.circle")
-            case .checkmark:
-                trailingIconView.image = UIImage(systemName: "checkmark")
-            case .detailButton:
-                trailingIconView.image = UIImage(systemName: "ellipsis.circle")
-            default:
-                trailingIconView.image = nil
-            } }
+            didSet {
+                switch trailingItem {
+                case .disclosureIndicator:
+                    trailingIconView.image = UIImage(systemName: "chevron.right")
+                case .detailDisclosureButton:
+                    trailingIconView.image = UIImage(systemName: "info.circle")
+                case .checkmark:
+                    trailingIconView.image = UIImage(systemName: "checkmark")
+                case .detailButton:
+                    trailingIconView.image = UIImage(systemName: "ellipsis.circle")
+                default:
+                    trailingIconView.image = nil
+                }
+                setNeedsUpdateConstraints()
+            }
         }
 
         override var accessibilityHint: String? {
@@ -54,10 +58,10 @@ extension ChidoriMenu {
         let iconView = UIImageView()
         let titleLabel = UILabel()
         let trailingIconView = UIImageView()
-        let horizontalStackView = UIStackView()
-
         let topSep = UIView()
-
+        
+        var removableConstraints: [NSLayoutConstraint] = []
+        
         override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
             super.init(style: style, reuseIdentifier: reuseIdentifier)
             backgroundColor = .clear
@@ -80,57 +84,43 @@ extension ChidoriMenu {
                 topSep.topAnchor.constraint(equalTo: contentView.topAnchor),
             ])
 
-            horizontalStackView.axis = .horizontal
-            horizontalStackView.spacing = 8
-            horizontalStackView.distribution = .fill
-            horizontalStackView.alignment = .center
-            contentView.addSubview(horizontalStackView)
-            horizontalStackView.translatesAutoresizingMaskIntoConstraints = false
-            NSLayoutConstraint.activate([
-                horizontalStackView.leadingAnchor.constraint(
-                    equalTo: contentView.leadingAnchor,
-                    constant: 8
-                ),
-                horizontalStackView.topAnchor.constraint(
-                    equalTo: contentView.topAnchor,
-                    constant: 8
-                ),
-                horizontalStackView.bottomAnchor.constraint(
-                    equalTo: contentView.bottomAnchor,
-                    constant: -8
-                ),
-                horizontalStackView.trailingAnchor.constraint(
-                    equalTo: contentView.trailingAnchor,
-                    constant: -8
-                ),
-            ])
-
             iconView.contentMode = .scaleAspectFit
             iconView.tintColor = .label
             iconView.translatesAutoresizingMaskIntoConstraints = false
-            horizontalStackView.addArrangedSubview(iconView)
-            NSLayoutConstraint.activate([
-                iconView.widthAnchor.constraint(equalToConstant: 22),
-                iconView.heightAnchor.constraint(equalToConstant: 22),
-            ])
+            contentView.addSubview(iconView)
 
             titleLabel.textColor = .label
             titleLabel.font = .preferredFont(forTextStyle: .body)
             titleLabel.textAlignment = .left
             titleLabel.numberOfLines = 0
             titleLabel.translatesAutoresizingMaskIntoConstraints = false
-            titleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
-            horizontalStackView.addArrangedSubview(titleLabel)
-
+            titleLabel.minimumScaleFactor = 0.5
+            titleLabel.adjustsFontSizeToFitWidth = true
+            contentView.addSubview(titleLabel)
+            
             trailingIconView.contentMode = .scaleAspectFit
             trailingIconView.layer.contentsGravity = .right
             trailingIconView.tintColor = ChidoriMenu.accentColor
             trailingIconView.translatesAutoresizingMaskIntoConstraints = false
-            horizontalStackView.addArrangedSubview(trailingIconView)
+            contentView.addSubview(trailingIconView)
+            
             NSLayoutConstraint.activate([
-                trailingIconView.widthAnchor.constraint(equalToConstant: 22),
-                trailingIconView.heightAnchor.constraint(equalToConstant: 22),
+            titleLabel.topAnchor.constraint(greaterThanOrEqualTo: contentView.topAnchor, constant: 8),
+            titleLabel.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -8),
+            titleLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 22),
+            titleLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            
+            iconView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
+            iconView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            iconView.widthAnchor.constraint(equalToConstant: 22),
+            iconView.heightAnchor.constraint(equalToConstant: 22),
+            
+            trailingIconView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
+            trailingIconView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            trailingIconView.heightAnchor.constraint(equalToConstant: 22),
             ])
+            
+            setNeedsUpdateConstraints()
         }
 
         @available(*, unavailable)
@@ -144,6 +134,28 @@ extension ChidoriMenu {
         override func setHighlighted(_ highlighted: Bool, animated: Bool) {
             super.setSelected(highlighted, animated: animated)
             backgroundColor = highlighted ? Self.highlightCoverColor : .clear
+        }
+        
+        override func updateConstraints() {
+            super.updateConstraints()
+            
+            removableConstraints.forEach { $0.isActive = false }
+            removableConstraints.removeAll()
+            
+            let titleLabelLeftAnchor = iconView.isHidden
+                ? contentView.leadingAnchor
+                : iconView.trailingAnchor
+            
+            let titleLabelTrailingAnchor = trailingIconView.image == nil
+                ? contentView.trailingAnchor
+                : trailingIconView.leadingAnchor
+            
+            removableConstraints.append(contentsOf: [
+                titleLabel.leadingAnchor.constraint(equalTo: titleLabelLeftAnchor, constant: 8),
+                titleLabel.trailingAnchor.constraint(equalTo: titleLabelTrailingAnchor, constant: -8),
+            ])
+            
+            removableConstraints.forEach { $0.isActive = true }
         }
     }
 
