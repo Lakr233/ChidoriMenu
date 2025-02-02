@@ -32,18 +32,21 @@ extension ChidoriMenu {
         }
 
         var trailingItem: UITableViewCell.AccessoryType = .none {
-            didSet { switch trailingItem {
-            case .disclosureIndicator:
-                trailingIconView.image = UIImage(systemName: "chevron.right")
-            case .detailDisclosureButton:
-                trailingIconView.image = UIImage(systemName: "info.circle")
-            case .checkmark:
-                trailingIconView.image = UIImage(systemName: "checkmark")
-            case .detailButton:
-                trailingIconView.image = UIImage(systemName: "ellipsis.circle")
-            default:
-                trailingIconView.image = nil
-            } }
+            didSet {
+                switch trailingItem {
+                case .disclosureIndicator:
+                    trailingIconView.image = UIImage(systemName: "chevron.right")
+                case .detailDisclosureButton:
+                    trailingIconView.image = UIImage(systemName: "info.circle")
+                case .checkmark:
+                    trailingIconView.image = UIImage(systemName: "checkmark")
+                case .detailButton:
+                    trailingIconView.image = UIImage(systemName: "ellipsis.circle")
+                default:
+                    trailingIconView.image = nil
+                }
+                trailingIconView.isHidden = trailingIconView.image == nil
+            }
         }
 
         override var accessibilityHint: String? {
