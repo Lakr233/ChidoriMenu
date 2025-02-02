@@ -128,7 +128,6 @@ extension ChidoriMenu {
             trailingIconView.translatesAutoresizingMaskIntoConstraints = false
             horizontalStackView.addArrangedSubview(trailingIconView)
             NSLayoutConstraint.activate([
-                trailingIconView.widthAnchor.constraint(equalToConstant: 22),
                 trailingIconView.heightAnchor.constraint(equalToConstant: 22),
             ])
         }
