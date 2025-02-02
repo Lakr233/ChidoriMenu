@@ -10,19 +10,40 @@ import UIKit
 extension ChidoriMenu {
     class Cell: UITableViewCell {
         var menuTitle: String = "" {
-            didSet { textLabel?.text = menuTitle }
+            didSet {
+                titleLabel.text = menuTitle
+                layoutIfNeeded()
+            }
         }
 
         var isDestructive: Bool = false {
             didSet {
                 let color: UIColor = isDestructive ? .systemRed : .label
-                textLabel?.textColor = color
-                imageView?.tintColor = color
+                titleLabel.textColor = color
+                iconView.tintColor = color
             }
         }
 
         var iconImage: UIImage? {
-            didSet { imageView?.image = iconImage?.cellIcon() }
+            didSet {
+                iconView.image = iconImage
+                iconView.isHidden = iconImage == nil
+            }
+        }
+
+        var trailingItem: UITableViewCell.AccessoryType = .none {
+            didSet { switch trailingItem {
+            case .disclosureIndicator:
+                trailingIconView.image = UIImage(systemName: "chevron.right")
+            case .detailDisclosureButton:
+                trailingIconView.image = UIImage(systemName: "info.circle")
+            case .checkmark:
+                trailingIconView.image = UIImage(systemName: "checkmark")
+            case .detailButton:
+                trailingIconView.image = UIImage(systemName: "ellipsis.circle")
+            default:
+                trailingIconView.image = nil
+            } }
         }
 
         override var accessibilityHint: String? {
@@ -30,37 +51,90 @@ extension ChidoriMenu {
             set { super.accessibilityHint = newValue }
         }
 
-        let sep = UIView()
+        let iconView = UIImageView()
+        let titleLabel = UILabel()
+        let trailingIconView = UIImageView()
+        let horizontalStackView = UIStackView()
+
+        let topSep = UIView()
 
         override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
             super.init(style: style, reuseIdentifier: reuseIdentifier)
             backgroundColor = .clear
             selectionStyle = .none
             accessibilityTraits = [.button]
-            textLabel?.textColor = .label
-            imageView?.contentMode = .scaleAspectFit
-            imageView?.tintColor = .label
+
             accessoryView?.isUserInteractionEnabled = false
             preservesSuperviewLayoutMargins = false
             separatorInset = UIEdgeInsets.zero
             layoutMargins = UIEdgeInsets.zero
-            sep.backgroundColor = ChidoriMenu.dimmingSectionSepratorColor
+            topSep.backgroundColor = ChidoriMenu.dimmingSectionSepratorColor
             textLabel?.numberOfLines = 0
-            contentView.addSubview(sep)
+
+            topSep.translatesAutoresizingMaskIntoConstraints = false
+            contentView.addSubview(topSep)
+            NSLayoutConstraint.activate([
+                topSep.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+                topSep.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+                topSep.heightAnchor.constraint(equalToConstant: 0.5),
+                topSep.topAnchor.constraint(equalTo: contentView.topAnchor),
+            ])
+
+            horizontalStackView.axis = .horizontal
+            horizontalStackView.spacing = 8
+            horizontalStackView.distribution = .fill
+            horizontalStackView.alignment = .center
+            contentView.addSubview(horizontalStackView)
+            horizontalStackView.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                horizontalStackView.leadingAnchor.constraint(
+                    equalTo: contentView.leadingAnchor,
+                    constant: 8
+                ),
+                horizontalStackView.topAnchor.constraint(
+                    equalTo: contentView.topAnchor,
+                    constant: 8
+                ),
+                horizontalStackView.bottomAnchor.constraint(
+                    equalTo: contentView.bottomAnchor,
+                    constant: -8
+                ),
+                horizontalStackView.trailingAnchor.constraint(
+                    equalTo: contentView.trailingAnchor,
+                    constant: -8
+                ),
+            ])
+
+            iconView.contentMode = .scaleAspectFit
+            iconView.tintColor = .label
+            iconView.translatesAutoresizingMaskIntoConstraints = false
+            horizontalStackView.addArrangedSubview(iconView)
+            NSLayoutConstraint.activate([
+                iconView.widthAnchor.constraint(equalToConstant: 22),
+                iconView.heightAnchor.constraint(equalToConstant: 22),
+            ])
+
+            titleLabel.textColor = .label
+            titleLabel.font = .preferredFont(forTextStyle: .body)
+            titleLabel.textAlignment = .left
+            titleLabel.numberOfLines = 0
+            titleLabel.translatesAutoresizingMaskIntoConstraints = false
+            titleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
+            horizontalStackView.addArrangedSubview(titleLabel)
+
+            trailingIconView.contentMode = .scaleAspectFit
+            trailingIconView.layer.contentsGravity = .right
+            trailingIconView.tintColor = ChidoriMenu.accentColor
+            trailingIconView.translatesAutoresizingMaskIntoConstraints = false
+            horizontalStackView.addArrangedSubview(trailingIconView)
+            NSLayoutConstraint.activate([
+                trailingIconView.widthAnchor.constraint(equalToConstant: 22),
+                trailingIconView.heightAnchor.constraint(equalToConstant: 22),
+            ])
         }
 
         @available(*, unavailable)
         required init?(coder _: NSCoder) { fatalError() }
-
-        override func layoutSubviews() {
-            super.layoutSubviews()
-            sep.frame = .init(
-                x: 0,
-                y: 0,
-                width: bounds.width,
-                height: 1
-            )
-        }
 
         override func setSelected(_ selected: Bool, animated: Bool) {
             super.setSelected(selected, animated: animated)
@@ -111,11 +185,5 @@ extension ChidoriMenu {
         override func layoutSubviews() {
             super.layoutSubviews()
         }
-    }
-}
-
-private extension UIImage {
-    func cellIcon() -> UIImage {
-        scale(with: .init(width: 22, height: 22)) ?? self
     }
 }

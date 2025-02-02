@@ -22,22 +22,22 @@ extension ChidoriMenu: UITableViewDelegate {
             cell.iconImage = action.image
             cell.isDestructive = action.attributes.contains(.destructive)
             switch action.state {
-            case .on: cell.accessoryType = .checkmark
-            case .mixed: cell.accessoryType = .detailButton
-            default: cell.accessoryType = .none
+            case .on: cell.trailingItem = .checkmark
+            case .mixed: cell.trailingItem = .detailButton
+            default: cell.trailingItem = .none
             }
-            cell.accessoryView?.tintColor = .label
+            cell.trailingIconView.tintColor = .label
         case let .submenu(menu):
             cell.menuTitle = menu.title
             cell.iconImage = menu.image
             cell.isDestructive = false
-            cell.accessoryType = .disclosureIndicator
-            cell.accessoryView?.tintColor = .label
+            cell.trailingItem = .disclosureIndicator
+            cell.trailingIconView.tintColor = .label
         }
         if section.title.isEmpty, indexPath.row == 0, indexPath.section == 0 {
-            cell.sep.isHidden = true
+            cell.topSep.isHidden = true
         } else {
-            cell.sep.isHidden = false
+            cell.topSep.isHidden = false
         }
         return cell
     }
