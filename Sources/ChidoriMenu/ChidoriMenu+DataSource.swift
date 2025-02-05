@@ -139,6 +139,9 @@ extension ChidoriMenu {
     }
 
     func executeAction(_ indexPath: IndexPath) {
+        if let haptic = ChidoriMenuConfiguration.hapticFeedback {
+            UIImpactFeedbackGenerator(style: haptic).impactOccurred()
+        }
         guard let action = dataSource.itemIdentifier(for: indexPath) else { return }
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
         for indexPath in tableView.indexPathsForSelectedRows ?? [] {
