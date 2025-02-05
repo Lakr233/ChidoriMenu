@@ -24,3 +24,8 @@ extension ChidoriMenu {
 extension ChidoriMenu.Cell {
     static let highlightCoverColor = UIColor.black.withAlphaComponent(0.05)
 }
+
+public enum ChidoriMenuConfiguration {
+    public static var accentColor: UIColor = .systemBlue
+    public static var hapticFeedback: UIImpactFeedbackGenerator.FeedbackStyle? = .light
+}

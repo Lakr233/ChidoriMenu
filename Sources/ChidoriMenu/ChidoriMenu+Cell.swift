@@ -36,16 +36,16 @@ extension ChidoriMenu {
                 switch trailingItem {
                 case .disclosureIndicator:
                     trailingIconView.image = UIImage(systemName: "chevron.right")?
-                        .withRenderingMode(.alwaysTemplate)
+                        .withTintColor(.gray.withAlphaComponent(0.25), renderingMode: .alwaysOriginal)
                 case .detailDisclosureButton:
                     trailingIconView.image = UIImage(systemName: "info.circle")?
-                        .withRenderingMode(.alwaysTemplate)
+                        .withTintColor(ChidoriMenuConfiguration.accentColor, renderingMode: .alwaysOriginal)
                 case .checkmark:
                     trailingIconView.image = UIImage(systemName: "checkmark")?
-                        .withRenderingMode(.alwaysTemplate)
+                        .withTintColor(ChidoriMenuConfiguration.accentColor, renderingMode: .alwaysOriginal)
                 case .detailButton:
                     trailingIconView.image = UIImage(systemName: "ellipsis.circle")?
-                        .withRenderingMode(.alwaysTemplate)
+                        .withTintColor(ChidoriMenuConfiguration.accentColor, renderingMode: .alwaysOriginal)
                 default:
                     trailingIconView.image = nil
                 }
@@ -132,7 +132,7 @@ extension ChidoriMenu {
 
             trailingIconView.contentMode = .scaleAspectFit
             trailingIconView.layer.contentsGravity = .right
-            trailingIconView.tintColor = ChidoriMenu.accentColor
+            trailingIconView.tintColor = ChidoriMenuConfiguration.accentColor
             trailingIconView.translatesAutoresizingMaskIntoConstraints = false
             trailingIconView.setContentCompressionResistancePriority(.required, for: .horizontal)
             trailingIconView.setContentHuggingPriority(.required, for: .horizontal)
