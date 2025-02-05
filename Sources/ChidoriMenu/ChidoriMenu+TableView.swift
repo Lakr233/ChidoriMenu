@@ -30,7 +30,7 @@ extension ChidoriMenu: UITableViewDelegate {
         case let .submenu(menu):
             cell.menuTitle = menu.title
             cell.iconImage = menu.image
-            cell.isDestructive = false
+            cell.isDestructive = menu.options.contains(.destructive)
             cell.trailingItem = .disclosureIndicator
             cell.trailingIconView.tintColor = .label
         }
