@@ -133,6 +133,14 @@ class ChidoriMenu: UIViewController {
         updateSnapshot()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if let haptic = ChidoriMenu.hapticFeedback {
+            UIImpactFeedbackGenerator(style: haptic).impactOccurred()
+        }
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         transitionController = nil
@@ -191,5 +199,7 @@ class ChidoriMenu: UIViewController {
 }
 
 extension ChidoriMenu {
-    static let accentColor: UIColor = .systemBlue
+    public static var accentColor: UIColor = .systemBlue
+    public static var hapticFeedback: UIImpactFeedbackGenerator.FeedbackStyle? = .light
 }
+

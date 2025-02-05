@@ -35,13 +35,17 @@ extension ChidoriMenu {
             didSet {
                 switch trailingItem {
                 case .disclosureIndicator:
-                    trailingIconView.image = UIImage(systemName: "chevron.right")
+                    trailingIconView.image = UIImage(systemName: "chevron.right")?
+                        .withRenderingMode(.alwaysTemplate)
                 case .detailDisclosureButton:
-                    trailingIconView.image = UIImage(systemName: "info.circle")
+                    trailingIconView.image = UIImage(systemName: "info.circle")?
+                        .withRenderingMode(.alwaysTemplate)
                 case .checkmark:
-                    trailingIconView.image = UIImage(systemName: "checkmark")
+                    trailingIconView.image = UIImage(systemName: "checkmark")?
+                        .withRenderingMode(.alwaysTemplate)
                 case .detailButton:
-                    trailingIconView.image = UIImage(systemName: "ellipsis.circle")
+                    trailingIconView.image = UIImage(systemName: "ellipsis.circle")?
+                        .withRenderingMode(.alwaysTemplate)
                 default:
                     trailingIconView.image = nil
                 }
