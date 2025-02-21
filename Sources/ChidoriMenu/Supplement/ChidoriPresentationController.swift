@@ -21,7 +21,6 @@ class ChidoriPresentationController: UIPresentationController {
         super.presentationTransitionWillBegin()
 
         guard let containerView else { return }
-        containerView.translatesAutoresizingMaskIntoConstraints = false
 
         dimmView.translatesAutoresizingMaskIntoConstraints = false
         dimmView.isUserInteractionEnabled = true
@@ -33,13 +32,6 @@ class ChidoriPresentationController: UIPresentationController {
 
         presentingViewController.view.tintAdjustmentMode = .dimmed
         containerView.addSubview(dimmView)
-
-        NSLayoutConstraint.activate([
-            containerView.leadingAnchor.constraint(equalTo: dimmView.leadingAnchor),
-            containerView.trailingAnchor.constraint(equalTo: dimmView.trailingAnchor),
-            containerView.topAnchor.constraint(equalTo: dimmView.topAnchor),
-            containerView.bottomAnchor.constraint(equalTo: dimmView.bottomAnchor),
-        ])
 
         let tapGesture = UITapGestureRecognizer(target: nil, action: nil)
         tapGesture.addTarget(self, action: #selector(dimmViewTapped))
@@ -63,6 +55,11 @@ class ChidoriPresentationController: UIPresentationController {
         super.dismissalTransitionDidEnd(completed)
 
         if completed { dimmView.removeFromSuperview() }
+    }
+
+    override func containerViewWillLayoutSubviews() {
+        super.containerViewWillLayoutSubviews()
+        dimmView.frame = containerView?.bounds ?? .zero
     }
 
     override var frameOfPresentedViewInContainerView: CGRect {

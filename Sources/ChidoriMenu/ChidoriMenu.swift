@@ -28,6 +28,8 @@ class ChidoriMenu: UIViewController {
         ).height.rounded(.up)
     }
 
+    var lockedFrame: CGRect? = nil
+
     var presentingParent: UIViewController? {
         var parent: UIViewController? = presentingViewController
         while let superMenu = parent as? ChidoriMenu {
@@ -81,6 +83,7 @@ class ChidoriMenu: UIViewController {
 
         view.backgroundColor = .clear
         view.layer.masksToBounds = false
+        view.translatesAutoresizingMaskIntoConstraints = false
 
         shadowView.backgroundColor = .systemBackground
         shadowView.layer.shadowColor = UIColor { provider in
@@ -135,19 +138,26 @@ class ChidoriMenu: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+
         if let haptic = ChidoriMenuConfiguration.hapticFeedback {
             UIImpactFeedbackGenerator(style: haptic).impactOccurred()
         }
     }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         transitionController = nil
     }
 
+    func lock(frame: CGRect) {
+        lockedFrame = frame
+        view.setNeedsLayout()
+    }
+
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+
+        if let lockedFrame { view.frame = lockedFrame }
 
         backgroundView.frame = view.bounds
         let contentFrame = backgroundView.bounds

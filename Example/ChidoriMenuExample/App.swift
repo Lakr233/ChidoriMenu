@@ -38,7 +38,7 @@ struct Content: UIViewControllerRepresentable {
             tableView.dataSource = self
             tableView.tableFooterView = FooterButton()
             view.addSubview(tableView)
-            
+
             ChidoriMenuConfiguration.accentColor = .systemPink
         }
 

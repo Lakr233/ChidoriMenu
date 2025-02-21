@@ -103,6 +103,7 @@ class ChidoriAnimationController: NSObject, ChidoriDelegateProtocol {
 
         let finalFrame = context.finalFrame(for: menu)
         menu.view.frame = finalFrame
+        menu.lock(frame: finalFrame)
 
         let translationRequired: CGVector = .init(
             dx: 0,
