@@ -21,6 +21,7 @@ class ChidoriPresentationController: UIPresentationController {
         super.presentationTransitionWillBegin()
 
         guard let containerView else { return }
+        containerView.translatesAutoresizingMaskIntoConstraints = false
 
         dimmView.translatesAutoresizingMaskIntoConstraints = false
         dimmView.isUserInteractionEnabled = true
