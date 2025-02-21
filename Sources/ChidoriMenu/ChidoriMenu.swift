@@ -28,7 +28,7 @@ class ChidoriMenu: UIViewController {
         ).height.rounded(.up)
     }
 
-    var lockedFrame: CGRect? = nil
+    private var anchorViewToFrame: CGRect? = nil
 
     var presentingParent: UIViewController? {
         var parent: UIViewController? = presentingViewController
@@ -149,15 +149,19 @@ class ChidoriMenu: UIViewController {
         transitionController = nil
     }
 
-    func lock(frame: CGRect) {
-        lockedFrame = frame
+    func anchorView(frame: CGRect) {
+        anchorViewToFrame = frame
         view.setNeedsLayout()
+    }
+    
+    func unlockViewFrame() {
+        anchorViewToFrame = nil
     }
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-        if let lockedFrame { view.frame = lockedFrame }
+        if let anchorViewToFrame { view.frame = anchorViewToFrame }
 
         backgroundView.frame = view.bounds
         let contentFrame = backgroundView.bounds

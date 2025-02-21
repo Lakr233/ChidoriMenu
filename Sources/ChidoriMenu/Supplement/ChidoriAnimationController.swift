@@ -103,7 +103,10 @@ class ChidoriAnimationController: NSObject, ChidoriDelegateProtocol {
 
         let finalFrame = context.finalFrame(for: menu)
         menu.view.frame = finalFrame
-        menu.lock(frame: finalFrame)
+        switch isPresenting {
+        case true: menu.anchorView(frame: finalFrame)
+        case false: menu.unlockViewFrame()
+        }
 
         let translationRequired: CGVector = .init(
             dx: 0,
