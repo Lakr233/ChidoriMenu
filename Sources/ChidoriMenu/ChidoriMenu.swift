@@ -77,7 +77,7 @@ class ChidoriMenu: UIViewController {
 
     @available(*, unavailable)
     public required init?(coder _: NSCoder) { fatalError() }
-
+    
     override public func viewDidLoad() {
         super.viewDidLoad()
 
@@ -153,7 +153,7 @@ class ChidoriMenu: UIViewController {
         anchorViewToFrame = frame
         view.setNeedsLayout()
     }
-    
+
     func unlockViewFrame() {
         anchorViewToFrame = nil
     }

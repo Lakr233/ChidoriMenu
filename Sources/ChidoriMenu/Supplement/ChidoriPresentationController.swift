@@ -8,7 +8,7 @@
 import UIKit
 
 class ChidoriPresentationController: UIPresentationController {
-    let dimmView: UIView = .init()
+    let dimmView: UIButton = .init()
     var minimalEdgeInset: CGFloat = 10
 
     protocol Delegate: AnyObject {
@@ -19,24 +19,14 @@ class ChidoriPresentationController: UIPresentationController {
 
     override func presentationTransitionWillBegin() {
         super.presentationTransitionWillBegin()
+        presentingViewController.view.tintAdjustmentMode = .dimmed
 
         guard let containerView else { return }
-
-        dimmView.translatesAutoresizingMaskIntoConstraints = false
-        dimmView.isUserInteractionEnabled = true
-        dimmView.isAccessibilityElement = true
-        dimmView.accessibilityTraits = .button
-        dimmView.accessibilityHint = NSLocalizedString("Close Menu", comment: "")
-        dimmView.backgroundColor = ChidoriMenu.dimmingBackgroundColor
-        dimmView.alpha = 0.0
-
-        presentingViewController.view.tintAdjustmentMode = .dimmed
         containerView.addSubview(dimmView)
+        dimmView.addTarget(self, action: #selector(dimmViewTapped), for: .touchUpInside)
+        dimmView.backgroundColor = ChidoriMenu.dimmingBackgroundColor
 
-        let tapGesture = UITapGestureRecognizer(target: nil, action: nil)
-        tapGesture.addTarget(self, action: #selector(dimmViewTapped))
-        dimmView.addGestureRecognizer(tapGesture)
-
+        dimmView.alpha = 0.0
         if let transitionCoordinator = presentingViewController.transitionCoordinator {
             transitionCoordinator.animate { _ in self.dimmView.alpha = 1.0 }
         }
@@ -49,12 +39,6 @@ class ChidoriPresentationController: UIPresentationController {
         if let transitionCoordinator = presentingViewController.transitionCoordinator {
             transitionCoordinator.animate { _ in self.dimmView.alpha = 0.0 }
         }
-    }
-
-    override func dismissalTransitionDidEnd(_ completed: Bool) {
-        super.dismissalTransitionDidEnd(completed)
-
-        if completed { dimmView.removeFromSuperview() }
     }
 
     override func containerViewWillLayoutSubviews() {
@@ -117,3 +101,4 @@ class ChidoriPresentationController: UIPresentationController {
         transitionDelegate?.didTapOverlayView(self)
     }
 }
+
