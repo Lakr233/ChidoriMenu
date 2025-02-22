@@ -85,7 +85,7 @@ class ChidoriMenu: UIViewController {
         view.layer.masksToBounds = false
         view.translatesAutoresizingMaskIntoConstraints = false
 
-        shadowView.backgroundColor = .systemBackground
+        shadowView.backgroundColor = ChidoriMenuConfiguration.backgroundColor
         shadowView.layer.shadowColor = UIColor { provider in
             switch provider.userInterfaceStyle {
             case .dark: UIColor.black.withAlphaComponent(0.25)
@@ -98,7 +98,7 @@ class ChidoriMenu: UIViewController {
         shadowView.layer.cornerRadius = ChidoriMenu.cornerRadius
         view.addSubview(shadowView)
 
-        backgroundView.backgroundColor = .systemBackground
+        backgroundView.backgroundColor = ChidoriMenuConfiguration.backgroundColor
         backgroundView.layer.masksToBounds = true
         backgroundView.layer.cornerRadius = ChidoriMenu.cornerRadius
         backgroundView.layer.cornerCurve = .continuous

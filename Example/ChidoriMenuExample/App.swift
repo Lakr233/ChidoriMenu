@@ -40,6 +40,7 @@ struct Content: UIViewControllerRepresentable {
             view.addSubview(tableView)
 
             ChidoriMenuConfiguration.accentColor = .systemPink
+            ChidoriMenuConfiguration.backgroundColor = .systemBackground
         }
 
         override func viewWillLayoutSubviews() {

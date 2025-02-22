@@ -27,5 +27,6 @@ extension ChidoriMenu.Cell {
 
 public enum ChidoriMenuConfiguration {
     public static var accentColor: UIColor = .systemBlue
+    public static var backgroundColor: UIColor = .systemBackground
     public static var hapticFeedback: UIImpactFeedbackGenerator.FeedbackStyle? = .light
 }
