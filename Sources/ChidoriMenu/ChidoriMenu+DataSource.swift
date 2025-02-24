@@ -159,7 +159,7 @@ extension ChidoriMenu {
                 y: cell.bounds.minY - ChidoriMenu.offsetY
             ))
             iterateMenusInStack {
-                $0.menuStackScaleFactor *= 1 - ChidoriMenu.stackScaleFactor
+                $0.menuStackScaleFactor -= ChidoriMenu.stackScaleFactor
             }
         }
     }

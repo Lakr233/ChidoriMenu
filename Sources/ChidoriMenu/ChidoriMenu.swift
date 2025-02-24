@@ -189,8 +189,11 @@ class ChidoriMenu: UIViewController {
     }
 
     override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
-        let superController = presentingViewController as? ChidoriMenu
-        superController?.menuStackScaleFactor = 1.0
+        var superController: UIViewController? = presentingViewController
+        while let menu = superController as? ChidoriMenu {
+            menu.menuStackScaleFactor = min(1.0, menu.menuStackScaleFactor + ChidoriMenu.stackScaleFactor)
+            superController = menu.presentingViewController
+        }
         super.dismiss(animated: flag, completion: completion)
     }
 
