@@ -150,9 +150,19 @@ extension ChidoriMenu {
         let content = action.content
         switch content {
         case let .action(action):
+            guard self.view.isUserInteractionEnabled else {
+                assertionFailure()
+                return
+            }
+            self.view.isUserInteractionEnabled = false
             presentingParent?.dismiss(animated: true) {
                 action.execute()
             }
+#if DEBUG
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+                assert(self == nil)
+            }
+#endif
         case let .submenu(menu):
             cell.present(menu: menu, anchorPoint: .init(
                 x: cell.bounds.midX,
