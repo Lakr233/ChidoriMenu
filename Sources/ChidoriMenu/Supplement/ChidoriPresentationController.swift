@@ -101,4 +101,3 @@ class ChidoriPresentationController: UIPresentationController {
         transitionDelegate?.didTapOverlayView(self)
     }
 }
-
