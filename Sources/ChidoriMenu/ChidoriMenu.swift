@@ -214,3 +214,9 @@ class ChidoriMenu: UIViewController {
         }
     }
 }
+
+public extension UIViewController {
+    var isChidoriMenu: Bool {
+        self is ChidoriMenu
+    }
+}
