@@ -28,6 +28,18 @@ class ChidoriMenu: UIViewController {
         ).height.rounded(.up)
     }
 
+    override var keyCommands: [UIKeyCommand]? {
+        [
+                UIKeyCommand(
+                    title: "Dismiss",
+                    action: #selector(escapePressed), // escape
+                    input: "\u{1b}",
+                    modifierFlags: [],
+                    propertyList: nil
+                ),
+        ]
+    }
+    
     private var anchorViewToFrame: CGRect? = nil
 
     var presentingParent: UIViewController? {
@@ -156,6 +168,10 @@ class ChidoriMenu: UIViewController {
 
     func unlockViewFrame() {
         anchorViewToFrame = nil
+    }
+    
+    @objc func escapePressed() {
+        dismiss(animated: true)
     }
 
     override func viewDidLayoutSubviews() {
