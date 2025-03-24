@@ -8,7 +8,12 @@
 import UIKit
 
 public extension UIView {
-    func present(menu: UIMenu, anchorPoint: CGPoint? = nil) {
+    func present(
+        menu: UIMenu,
+        anchorPoint: CGPoint? = nil,
+        controllerDidLoad: @escaping (UIViewController) -> () = { _ in },
+        controllerDidPresent: @escaping (UIViewController) -> () = { _ in }
+    ) {
         guard let presenter = parentViewController else { return }
         let chidoriMenu = ChidoriMenu(
             menu: menu,
@@ -17,7 +22,9 @@ public extension UIView {
                 y: anchorPoint?.y ?? bounds.midY
             ), to: window)
         )
+        controllerDidLoad(chidoriMenu)
         presenter.present(chidoriMenu, animated: true) {
+            controllerDidPresent(chidoriMenu)
             chidoriMenu.dismissIfEmpty()
         }
     }
