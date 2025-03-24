@@ -8,9 +8,16 @@
 import UIKit
 
 public extension UIButton {
-    func presentMenu() {
+    func presentMenu(
+        controllerDidLoad: @escaping (UIViewController) -> () = { _ in },
+        controllerDidPresent: @escaping (UIViewController) -> () = { _ in }
+    ) {
         guard let menu = retrieveMenu() else { return }
-        present(menu: menu)
+        present(
+            menu: menu,
+            controllerDidLoad: controllerDidLoad,
+            controllerDidPresent: controllerDidPresent
+        )
     }
 }
 
