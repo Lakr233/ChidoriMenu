@@ -23,8 +23,8 @@ This project draws heavily on code from [ChidoriMenu](https://github.com/christi
 
 ## Requirements
 
-- iOS 15.0 or later
-- macCatalyst 15.0 or later
+- iOS 13.0 or later
+- macCatalyst 13.0 or later
 
 ## Usage
 
