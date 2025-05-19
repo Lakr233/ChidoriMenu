@@ -7,10 +7,34 @@
 
 import UIKit
 
-extension ChidoriMenu: UITableViewDelegate {
-    func cell(forRowAtIndex indexPath: IndexPath, dataSource: DataSource) -> UITableViewCell? {
-        guard let section = dataSource.sectionIdentifier(for: indexPath.section),
-              let item = dataSource.itemIdentifier(for: indexPath)
+extension ChidoriMenu: UITableViewDelegate, UITableViewDataSource {
+    func sectionContents(forIndexPath indexPath: IndexPath) -> MenuSection? {
+        sectionContents(for: indexPath.section)
+    }
+
+    func sectionContents(for sectionIndex: Int) -> MenuSection? {
+        dataSource[sectionIndex].section
+    }
+
+    func item(forIndexPath indexPath: IndexPath) -> MenuContent? {
+        dataSource[indexPath.section].contents[indexPath.row]
+    }
+
+    func numberOfSections(in _: UITableView) -> Int {
+        dataSource.count
+    }
+
+    func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
+        dataSource[section].contents.count
+    }
+
+    func tableView(_: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        cell(forRowAtIndex: indexPath, dataSource: dataSource) ?? UITableViewCell()
+    }
+
+    func cell(forRowAtIndex indexPath: IndexPath, dataSource _: DataSourceContents) -> UITableViewCell? {
+        guard let section = sectionContents(forIndexPath: indexPath),
+              let item = item(forIndexPath: indexPath)
         else { return nil }
         let cell = tableView.dequeueReusableCell(
             withIdentifier: String(describing: Cell.self),
@@ -59,7 +83,7 @@ extension ChidoriMenu: UITableViewDelegate {
     }
 
     func tableView(_: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        guard let section = dataSource.sectionIdentifier(for: section) else {
+        guard let section = sectionContents(for: section) else {
             return 0
         }
         if section.title.isEmpty { return 0 }
@@ -67,7 +91,7 @@ extension ChidoriMenu: UITableViewDelegate {
     }
 
     func tableView(_: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        guard let section = dataSource.sectionIdentifier(for: section) else {
+        guard let section = sectionContents(for: section) else {
             return nil
         }
         if section.title.isEmpty { return nil }

@@ -44,24 +44,23 @@ extension ChidoriMenu.MenuContent {
 }
 
 extension ChidoriMenu {
-    typealias DataSource = UITableViewDiffableDataSource<MenuSection, MenuContent>
-    typealias Snapshot = NSDiffableDataSourceSnapshot<MenuSection, MenuContent>
+    typealias DataSourceContents = [(section: MenuSection, contents: [MenuContent])]
 
-    func updateSnapshot() {
-        var snapshot = Snapshot()
+    func updateDataSourceContents() {
+        assert(Thread.isMainThread)
         let contents = flatMap(menu: menu)
-        for (section, items) in contents {
-            snapshot.appendSections([section])
-            snapshot.appendItems(items, toSection: section)
+        dataSource = contents
+        tableView.reloadData()
+    }
+
+    func flatMap(menu: UIMenu) -> DataSourceContents {
+        if let menu = menu as? DeferredMenu {
+            return flatMap(menu: menu.menuProvider())
         }
-        dataSource.apply(snapshot, animatingDifferences: false)
+        return flatMap(initialTitle: menu.title, menuChildren: menu.children)
     }
 
-    func flatMap(menu: UIMenu) -> [(MenuSection, [MenuContent])] {
-        flatMap(initialTitle: menu.title, menuChildren: menu.children)
-    }
-
-    func flatMap(initialTitle: String = "", menuChildren: [UIMenuElement]) -> [(MenuSection, [MenuContent])] {
+    func flatMap(initialTitle: String = "", menuChildren: [UIMenuElement]) -> DataSourceContents {
         var result: [(MenuSection, [MenuContent])] = []
 
         var sectionTitle: String = initialTitle
@@ -80,7 +79,16 @@ extension ChidoriMenu {
                 sectionBuilder.append(.init(content: .action(action)))
                 continue
             }
-            if let childMenu = element as? UIMenu {
+
+            // MARK: - UIMenu & DeferredMenu(Backport iOS 14+)
+
+            var childMenu: UIMenu?
+            if let castMenu = element as? DeferredMenu {
+                childMenu = castMenu.menuProvider()
+            } else if let castMenu = element as? UIMenu {
+                childMenu = castMenu
+            }
+            if let childMenu {
                 if childMenu.options.contains(.displayInline) {
                     let title = childMenu.title
                     if title.isEmpty {
@@ -105,31 +113,36 @@ extension ChidoriMenu {
                 sectionBuilder.append(.init(content: .submenu(childMenu)))
                 continue
             }
-            if let deferred = element as? UIDeferredMenuElement {
-                var menuItems: [UIMenuElement] = []
-                var menuItemsWasSet = false
-                let retriever = { (items: [UIMenuElement]) in
-                    menuItemsWasSet = true
-                    menuItems = items
-                }
-                let selector = NSSelectorFromString("elementProvider")
-                guard deferred.responds(to: selector),
-                      let block = deferred.perform(selector)?.takeUnretainedValue()
-                else {
-                    assertionFailure()
+
+            // MARK: - UIDeferredMenuElement
+
+            if #available(iOS 14.0, macCatalyst 14.0, *) {
+                if let deferred = element as? UIDeferredMenuElement {
+                    var menuItems: [UIMenuElement] = []
+                    var menuItemsWasSet = false
+                    let retriever = { (items: [UIMenuElement]) in
+                        menuItemsWasSet = true
+                        menuItems = items
+                    }
+                    let selector = NSSelectorFromString("elementProvider")
+                    guard deferred.responds(to: selector),
+                          let block = deferred.perform(selector)?.takeUnretainedValue()
+                    else {
+                        assertionFailure()
+                        continue
+                    }
+                    typealias ProviderBlock = @convention(block) (([UIMenuElement]) -> Void) -> Void
+                    let providerBlock = unsafeBitCast(block, to: ProviderBlock.self)
+                    providerBlock(retriever)
+                    assert(menuItemsWasSet, "ChidoriMenu does not support async deferred menu elements")
+                    guard !menuItems.isEmpty else { continue }
+
+                    sectionBuilderCommit()
+                    for (section, items) in flatMap(menuChildren: menuItems) {
+                        result.append((section, items))
+                    }
                     continue
                 }
-                typealias ProviderBlock = @convention(block) (([UIMenuElement]) -> Void) -> Void
-                let providerBlock = unsafeBitCast(block, to: ProviderBlock.self)
-                providerBlock(retriever)
-                assert(menuItemsWasSet, "ChidoriMenu does not support async deferred menu elements")
-                guard !menuItems.isEmpty else { continue }
-
-                sectionBuilderCommit()
-                for (section, items) in flatMap(menuChildren: menuItems) {
-                    result.append((section, items))
-                }
-                continue
             }
             assertionFailure()
         }
@@ -142,7 +155,7 @@ extension ChidoriMenu {
         if let haptic = ChidoriMenuConfiguration.hapticFeedback {
             UIImpactFeedbackGenerator(style: haptic).impactOccurred()
         }
-        guard let action = dataSource.itemIdentifier(for: indexPath) else { return }
+        guard let action = item(forIndexPath: indexPath) else { return }
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
         for indexPath in tableView.indexPathsForSelectedRows ?? [] {
             tableView.deselectRow(at: indexPath, animated: true)

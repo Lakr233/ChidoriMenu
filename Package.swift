@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "ChidoriMenu",
-    platforms: [.iOS(.v15), .macCatalyst(.v15)],
+    platforms: [.iOS(.v13), .macCatalyst(.v13)],
     products: [
         .library(
             name: "ChidoriMenu",

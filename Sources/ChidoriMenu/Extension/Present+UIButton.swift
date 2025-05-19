@@ -9,8 +9,8 @@ import UIKit
 
 public extension UIButton {
     func presentMenu(
-        controllerDidLoad: @escaping (UIViewController) -> () = { _ in },
-        controllerDidPresent: @escaping (UIViewController) -> () = { _ in }
+        controllerDidLoad: @escaping (UIViewController) -> Void = { _ in },
+        controllerDidPresent: @escaping (UIViewController) -> Void = { _ in }
     ) {
         guard let menu = retrieveMenu() else { return }
         present(
@@ -34,11 +34,13 @@ extension UIButton {
                 return menu
             }
         }
-        if let menuConfig = contextMenuInteraction(
-            .init(delegate: RetrieveMenuDelegate.shared),
-            configurationForMenuAtLocation: .zero
-        ), let menu = menuConfig.retrieveMenu() {
-            return menu
+        if #available(iOS 14.0, macCatalyst 14.0, *) {
+            if let menuConfig = contextMenuInteraction(
+                .init(delegate: RetrieveMenuDelegate.shared),
+                configurationForMenuAtLocation: .zero
+            ), let menu = menuConfig.retrieveMenu() {
+                return menu
+            }
         }
         return nil
     }

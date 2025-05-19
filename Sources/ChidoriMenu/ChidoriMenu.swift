@@ -9,7 +9,7 @@ import UIKit
 
 class ChidoriMenu: UIViewController {
     let tableView: UITableView
-    var dataSource: DataSource!
+    var dataSource: DataSourceContents = []
 
     let menu: UIMenu
     let anchorPoint: CGPoint
@@ -30,16 +30,16 @@ class ChidoriMenu: UIViewController {
 
     override var keyCommands: [UIKeyCommand]? {
         [
-                UIKeyCommand(
-                    title: "Dismiss",
-                    action: #selector(escapePressed), // escape
-                    input: "\u{1b}",
-                    modifierFlags: [],
-                    propertyList: nil
-                ),
+            UIKeyCommand(
+                title: "Dismiss",
+                action: #selector(escapePressed), // escape
+                input: "\u{1b}",
+                modifierFlags: [],
+                propertyList: nil
+            ),
         ]
     }
-    
+
     private var anchorViewToFrame: CGRect? = nil
 
     var presentingParent: UIViewController? {
@@ -70,18 +70,12 @@ class ChidoriMenu: UIViewController {
         tableView = TableView(frame: .zero, style: .plain)
 
         tableView.register(Cell.self, forCellReuseIdentifier: String(describing: Cell.self))
-        tableView.dataSource = dataSource
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = UITableView.automaticDimension
 
         super.init(nibName: nil, bundle: nil)
 
-        dataSource = DataSource(
-            tableView: tableView
-        ) { [weak self] _, indexPath, _ -> UITableViewCell? in
-            guard let self else { return nil }
-            return cell(forRowAtIndex: indexPath, dataSource: dataSource)
-        }
+        tableView.dataSource = self
 
         modalPresentationStyle = .custom
         transitioningDelegate = self
@@ -122,10 +116,14 @@ class ChidoriMenu: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.backgroundColor = .clear
         tableView.allowsMultipleSelection = false
-        tableView.selectionFollowsFocus = true
         tableView.allowsSelection = true
-        tableView.allowsFocus = false
-        tableView.sectionHeaderTopPadding = Self.sectionTopPadding
+        if #available(iOS 14.0, macCatalyst 14.0, *) {
+            tableView.selectionFollowsFocus = true
+        }
+        if #available(iOS 15.0, macCatalyst 15.0, *) {
+            tableView.allowsFocus = false
+            tableView.sectionHeaderTopPadding = Self.sectionTopPadding
+        }
         tableView.verticalScrollIndicatorInsets = UIEdgeInsets(
             top: ChidoriMenu.cornerRadius,
             left: 0.0,
@@ -145,7 +143,7 @@ class ChidoriMenu: UIViewController {
         panGestureRecognizer.cancelsTouchesInView = true
         tableView.addGestureRecognizer(panGestureRecognizer)
 
-        updateSnapshot()
+        updateDataSourceContents()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -169,7 +167,7 @@ class ChidoriMenu: UIViewController {
     func unlockViewFrame() {
         anchorViewToFrame = nil
     }
-    
+
     @objc func escapePressed() {
         dismiss(animated: true)
     }
@@ -214,10 +212,7 @@ class ChidoriMenu: UIViewController {
     }
 
     func dismissIfEmpty() {
-        var count = 0
-        for idx in 0 ..< dataSource.numberOfSections(in: tableView) {
-            count += dataSource.tableView(tableView, numberOfRowsInSection: idx)
-        }
+        let count = dataSource.reduce(0) { $0 + $1.contents.count }
         guard count <= 0 else { return }
         dismiss(animated: true)
     }

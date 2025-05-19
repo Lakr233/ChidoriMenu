@@ -430,6 +430,15 @@ struct Content: UIViewControllerRepresentable {
             ]
         ))
 
+        let backportMenu: Menu = .init(title: "iOS 14- DeferredMenu Test", menu: DeferredMenu.uncached {
+            let item = Int.random(in: 1111 ... 9999)
+            print("DeferredMenu returning new elements \(item)")
+            return UIMenu(title: "DeferredMenu", children: [
+                UIAction(title: String(item)) { _ in
+                },
+            ])
+        })
+
         var menuList: [Menu] { [
             firstMenu,
             secondMenu,
@@ -437,6 +446,7 @@ struct Content: UIViewControllerRepresentable {
             deferredMenuElement,
             productionTest,
             longTextTest,
+            backportMenu,
         ] }
 
         func numberOfSections(in _: UITableView) -> Int {
