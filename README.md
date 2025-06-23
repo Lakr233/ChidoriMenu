@@ -19,7 +19,7 @@ This project draws heavily on code from [ChidoriMenu](https://github.com/christi
 - [x] Added compatibility with dark mode
 - [x] Fixed scrolling issues during selection
 - [x] Fixed multiple actions triggering simultaneously
-- [ ] Added support for UIDeferredMenuElement (Contributions Welcome!)
+- [x] Added support for UIDeferredMenuElement with backward compatibility
 
 ## Requirements
 
@@ -36,6 +36,18 @@ UIView.present(menu: menu)
 ```
 
 For detailed examples, check out the example project included in the repository.
+
+## Compatibility Notes
+
+### UIDeferredMenuElement Support
+
+ChidoriMenu provides full backward compatibility for `UIDeferredMenuElement`, including support for future iOS versions. Starting from iOS 26, Apple removed the `elementProvider` property from `UIDeferredMenuElement`. ChidoriMenu automatically detects this change and dynamically adds the missing functionality through runtime hooking, ensuring your existing code continues to work seamlessly across all iOS versions.
+
+This implementation:
+- Hooks the `elementWithProvider:` and `elementWithUncachedProvider:` factory methods
+- Dynamically adds the `elementProvider` property when missing
+- Maintains proper block lifecycle management
+- Works transparently with existing Swift code
 
 ## License
 
