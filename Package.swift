@@ -13,6 +13,9 @@ let package = Package(
         ),
     ],
     targets: [
-        .target(name: "ChidoriMenu"),
+        .target(name: "ChidoriMenu", dependencies: [
+            "ChidoriMenuMagic",
+        ]),
+        .target(name: "ChidoriMenuMagic"), // Hooks
     ]
 )
