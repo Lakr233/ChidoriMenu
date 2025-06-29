@@ -145,7 +145,7 @@ class ChidoriMenu: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         transitionController = nil
-        view.becomeFirstResponder()
+        tableView.becomeFirstResponder()
     }
 
     func anchorView(frame: CGRect) {
