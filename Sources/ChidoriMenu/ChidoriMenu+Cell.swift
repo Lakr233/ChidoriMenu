@@ -197,14 +197,13 @@ extension ChidoriMenu {
         override func layoutSubviews() {
             super.layoutSubviews()
 
-            let horizontalPadding: CGFloat = 8
             let titleHeight = titleLabel.font.lineHeight
             let titleY = (bounds.height - titleHeight) / 2 - ChidoriMenu.sectionTopPadding / 2
 
             titleLabel.frame = CGRect(
-                x: horizontalPadding,
+                x: ChidoriMenu.horizontalPadding,
                 y: titleY,
-                width: bounds.width - horizontalPadding * 2,
+                width: bounds.width - ChidoriMenu.horizontalPadding * 2,
                 height: titleHeight
             )
         }
