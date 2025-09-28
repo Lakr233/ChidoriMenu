@@ -40,7 +40,7 @@ extension ChidoriMenu: UITableViewDelegate, UITableViewDataSource {
             withIdentifier: String(describing: Cell.self),
             for: indexPath
         ) as! Cell
-        cell.hasAnyIcon = hasAnyIcon
+        cell.sectionHasAnyIcon = section.hasAnyIcon
         switch item.content {
         case let .action(action):
             cell.title = action.title
@@ -102,37 +102,39 @@ extension ChidoriMenu: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        guard let item = item(at: indexPath) else {
+        guard let item = item(at: indexPath),
+              let section = section(at: indexPath)
+        else {
             return UITableView.automaticDimension
         }
 
         let menuWidth = width
         var availableTextWidth = menuWidth - MenuLayout.horizontalPadding * 2
 
-        // Use consistent text alignment when any menu item has an icon
-        if hasAnyIcon {
-            // All text aligned after icon space when any item has an icon
-            availableTextWidth -= ChidoriMenu.iconSize + ChidoriMenu.spacing
+        // Use consistent text alignment when any menu item in this section has an icon
+        if section.hasAnyIcon {
+            // All text aligned after icon space when any item in section has an icon
+            availableTextWidth -= MenuLayout.iconSize + MenuLayout.spacing
         }
 
         switch item.content {
         case let .action(action):
             // Subtract icon space if present (unless already accounted for)
-            if action.image != nil && !hasAnyIcon {
-                availableTextWidth -= ChidoriMenu.iconSize + ChidoriMenu.spacing
+            if action.image != nil && !section.hasAnyIcon {
+                availableTextWidth -= MenuLayout.iconSize + MenuLayout.spacing
             }
             // Subtract trailing icon space if present
             if action.chidoriKeepsMenuPresented || action.state != .off {
-                availableTextWidth -= ChidoriMenu.iconSize + ChidoriMenu.spacing
+                availableTextWidth -= MenuLayout.iconSize + MenuLayout.spacing
             }
 
         case let .submenu(menu):
             // Subtract icon space if present (unless already accounted for)
-            if menu.image != nil, !hasAnyIcon {
-                availableTextWidth -= ChidoriMenu.iconSize + ChidoriMenu.spacing
+            if menu.image != nil, !section.hasAnyIcon {
+                availableTextWidth -= MenuLayout.iconSize + MenuLayout.spacing
             }
             // Always subtract trailing icon for submenus
-            availableTextWidth -= ChidoriMenu.iconSize + ChidoriMenu.spacing
+            availableTextWidth -= MenuLayout.iconSize + MenuLayout.spacing
         }
 
         // Calculate text height

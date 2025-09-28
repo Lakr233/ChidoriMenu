@@ -10,7 +10,6 @@ import UIKit
 class ChidoriMenu: UIViewController {
     let tableView: UITableView
     var dataSource: DataSourceContents = []
-    var hasAnyIcon: Bool = false
 
     let menu: UIMenu
     let anchorPoint: CGPoint

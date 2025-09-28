@@ -28,9 +28,9 @@ class ChidoriAnimationController: NSObject, ChidoriDelegateProtocol {
     ) -> TimeInterval {
         switch type {
         case .presentation:
-            0.5
-        case .dismissal:
             0.35
+        case .dismissal:
+            0.25
         }
     }
 
@@ -84,7 +84,7 @@ class ChidoriAnimationController: NSObject, ChidoriDelegateProtocol {
             duration: duration,
             timingParameters: UISpringTimingParameters(
                 dampingRatio: 0.75,
-                initialVelocity: .init(dx: 1.0, dy: 1.0)
+                initialVelocity: .init(dx: 0.9, dy: 0.9)
             )
         )
 

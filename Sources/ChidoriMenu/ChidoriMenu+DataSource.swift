@@ -12,6 +12,7 @@ extension ChidoriMenu {
     struct MenuSection: Identifiable, Hashable {
         let id = UUID()
         let title: String
+        let hasAnyIcon: Bool
     }
 
     struct MenuContent: Identifiable, Hashable {
@@ -96,7 +97,18 @@ extension ChidoriMenu {
 
         func commitCurrentSection() {
             guard !sectionBuilder.isEmpty else { return }
-            let section = MenuSection(title: sectionTitle)
+
+            // Calculate if this section has any icons
+            let sectionHasAnyIcon = sectionBuilder.contains { content in
+                switch content.content {
+                case let .action(action):
+                    action.image != nil
+                case let .submenu(menu):
+                    menu.image != nil
+                }
+            }
+
+            let section = MenuSection(title: sectionTitle, hasAnyIcon: sectionHasAnyIcon)
             result.append((section, sectionBuilder))
             sectionTitle = ""
             sectionBuilder = []
@@ -107,26 +119,7 @@ extension ChidoriMenu {
         assert(Thread.isMainThread)
         let contents = flattenedContents(from: menu)
         dataSource = contents
-        hasAnyIcon = calculateHasAnyIcon()
         tableView.reloadData()
-    }
-
-    private func calculateHasAnyIcon() -> Bool {
-        for section in dataSource {
-            for content in section.contents {
-                switch content.content {
-                case let .action(action):
-                    if action.image != nil {
-                        return true
-                    }
-                case let .submenu(menu):
-                    if menu.image != nil {
-                        return true
-                    }
-                }
-            }
-        }
-        return false
     }
 
     func flattenedContents(from menu: UIMenu) -> DataSourceContents {

@@ -62,7 +62,7 @@ extension ChidoriMenu {
             }
         }
 
-        var hasAnyIcon: Bool = false
+        var sectionHasAnyIcon: Bool = false
 
         override var accessibilityHint: String? {
             get { super.accessibilityHint ?? title }
@@ -151,13 +151,13 @@ extension ChidoriMenu {
             trailingIconView.frame = trailingIconFrame
 
             // Title label - vertically centered with proper multi-line support
-            // Use consistent text alignment when any menu item has an icon
-            let titleX: CGFloat = if hasAnyIcon {
-                // All text aligned after icon space when any item has an icon
+            // Use consistent text alignment when any menu item in this section has an icon
+            let titleX: CGFloat = if sectionHasAnyIcon {
+                // All text aligned after icon space when any item in section has an icon
                 MenuLayout.horizontalPadding + MenuLayout.iconSize + MenuLayout.spacing
             } else {
-                // Original behavior when no icons present
-                iconView.isHidden ? MenuLayout.horizontalPadding : iconFrame.maxX + MenuLayout.spacing
+                // When no icons in section, align text to left edge
+                MenuLayout.horizontalPadding
             }
             let titleWidth = contentBounds.width - titleX - MenuLayout.horizontalPadding - (trailingIconView.isHidden ? 0 : MenuLayout.iconSize + MenuLayout.spacing)
 
