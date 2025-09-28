@@ -37,4 +37,6 @@ public enum ChidoriMenuConfiguration {
     public static var backgroundColor: UIColor = .systemBackground
     public static var hapticFeedback: UIImpactFeedbackGenerator.FeedbackStyle? = .light
     public static var suggestedWidth: CGFloat? = 300
+    public static var prefersLiquidGlass: Bool = true
+    public static var glassTintColor: UIColor?
 }

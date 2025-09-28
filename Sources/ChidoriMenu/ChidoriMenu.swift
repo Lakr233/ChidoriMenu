@@ -16,6 +16,8 @@ class ChidoriMenu: UIViewController {
 
     let backgroundView = UIView()
     let shadowView = UIView()
+    private var glassEffectView: UIVisualEffectView?
+    private var chromeContentView: UIView { glassEffectView?.contentView ?? backgroundView }
     let panGestureRecognizer: UIPanGestureRecognizer = .init()
 
     var transitionController: ChidoriAnimationController?
@@ -114,11 +116,7 @@ class ChidoriMenu: UIViewController {
         shadowView.layer.cornerRadius = MenuLayout.cornerRadius
         view.addSubview(shadowView)
 
-        backgroundView.backgroundColor = ChidoriMenuConfiguration.backgroundColor
-        backgroundView.layer.masksToBounds = true
-        backgroundView.layer.cornerRadius = MenuLayout.cornerRadius
-        backgroundView.layer.cornerCurve = .continuous
-        view.addSubview(backgroundView)
+        configureBackgroundChrome()
 
         tableView.separatorInset = .zero
         tableView.contentInset = .zero
@@ -140,7 +138,7 @@ class ChidoriMenu: UIViewController {
             bottom: MenuLayout.cornerRadius,
             right: 0.0
         )
-        backgroundView.addSubview(tableView)
+        chromeContentView.addSubview(tableView)
 
         tableView.estimatedSectionHeaderHeight = 0.0
         tableView.estimatedRowHeight = 0.0
@@ -206,8 +204,10 @@ class ChidoriMenu: UIViewController {
 
         if let anchorViewToFrame { view.frame = anchorViewToFrame }
 
+        shadowView.frame = view.bounds
         backgroundView.frame = view.bounds
-        let contentFrame = backgroundView.bounds
+        glassEffectView?.frame = backgroundView.bounds
+        let contentFrame = chromeContentView.bounds
         tableView.separatorStyle = .none
         tableView.frame = .init(
             x: contentFrame.minX,
@@ -314,6 +314,39 @@ class ChidoriMenu: UIViewController {
         let attributes = [NSAttributedString.Key.font: font]
         let size = (text as NSString).size(withAttributes: attributes)
         return size.width
+    }
+
+    private func configureBackgroundChrome() {
+        backgroundView.backgroundColor = ChidoriMenuConfiguration.backgroundColor
+        backgroundView.layer.masksToBounds = true
+        backgroundView.layer.cornerRadius = MenuLayout.cornerRadius
+        backgroundView.layer.cornerCurve = .continuous
+        view.addSubview(backgroundView)
+
+        guard ChidoriMenuConfiguration.prefersLiquidGlass else { return }
+
+        if #available(iOS 26.0, macCatalyst 26.0, *), glassEffectView == nil {
+            let effectStyle: UIGlassEffect.Style = .clear
+            let glassEffect = UIGlassEffect(style: effectStyle)
+            if let tint = ChidoriMenuConfiguration.glassTintColor {
+                glassEffect.tintColor = tint
+            } else {
+                glassEffect.tintColor = ChidoriMenuConfiguration.backgroundColor.withAlphaComponent(0.75)
+            }
+            glassEffect.isInteractive = true
+
+            let effectView = UIVisualEffectView(effect: glassEffect)
+            effectView.frame = backgroundView.bounds
+            effectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+            effectView.layer.cornerRadius = MenuLayout.cornerRadius
+            effectView.layer.cornerCurve = .continuous
+            effectView.layer.masksToBounds = true
+            backgroundView.addSubview(effectView)
+            glassEffectView = effectView
+
+            shadowView.backgroundColor = ChidoriMenuConfiguration.backgroundColor.withAlphaComponent(0.35)
+            backgroundView.backgroundColor = .clear
+        }
     }
 }
 
