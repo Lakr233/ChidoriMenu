@@ -108,40 +108,41 @@ extension ChidoriMenu: UITableViewDelegate, UITableViewDataSource {
             return UITableView.automaticDimension
         }
 
-        let menuWidth = width
+        // Use a temporary cell to calculate the exact height
+        let cell = Cell(style: .default, reuseIdentifier: nil)
 
-        // Calculate available text width matching the cell layout logic
-        let titleX: CGFloat = if section.hasAnyIcon {
-            // All text aligned after icon space when any item in section has an icon
-            MenuLayout.horizontalPadding + MenuLayout.iconSize + MenuLayout.spacing
-        } else {
-            // When no icons in section, align text to left edge
-            MenuLayout.horizontalPadding
-        }
-
-        // Calculate trailing icon space
-        let trailingIconSpace: CGFloat = switch item.content {
+        // Configure the cell with current data
+        cell.sectionHasAnyIcon = section.hasAnyIcon
+        switch item.content {
         case let .action(action):
-            // Check if trailing icon will be visible
-            (action.chidoriKeepsMenuPresented || action.state != .off) ? MenuLayout.iconSize + MenuLayout.spacing : 0
-        case .submenu:
-            // Submenus always have trailing disclosure indicator
-            MenuLayout.iconSize + MenuLayout.spacing
+            cell.title = action.title
+            cell.icon = action.image
+            cell.isDestructive = action.attributes.contains(.destructive)
+            cell.isDisabled = action.chidoriIsDisabled
+            switch action.state {
+            case .on: cell.trailingAccessory = .checkmark
+            case .mixed: cell.trailingAccessory = .detailButton
+            default: cell.trailingAccessory = .none
+            }
+            cell.trailingIconView.tintColor = .label
+        case let .submenu(menu):
+            cell.title = menu.title
+            cell.icon = menu.image
+            cell.isDestructive = menu.options.contains(.destructive)
+            cell.isDisabled = menu.chidoriIsDisabled
+            cell.trailingAccessory = .disclosureIndicator
+            cell.trailingIconView.tintColor = .label
         }
 
-        let availableTextWidth = menuWidth - titleX - MenuLayout.horizontalPadding - trailingIconSpace
-
-        // Calculate text height
-        let font = UIFont.preferredFont(forTextStyle: .body)
-        let textHeight = (item.title as NSString).boundingRect(
-            with: CGSize(width: availableTextWidth, height: .greatestFiniteMagnitude),
-            options: [.usesLineFragmentOrigin, .usesFontLeading],
-            attributes: [.font: font],
-            context: nil
+        // Calculate the cell height using the actual layout
+        let targetSize = CGSize(width: width, height: UIView.layoutFittingCompressedSize.height)
+        let height = cell.systemLayoutSizeFitting(
+            targetSize,
+            withHorizontalFittingPriority: .required,
+            verticalFittingPriority: .fittingSizeLevel
         ).height
 
-        let rowHeight = max(textHeight + ChidoriMenu.verticalPadding * 2, ChidoriMenu.minRowHeight)
-        return rowHeight
+        return max(height, ChidoriMenu.minRowHeight)
     }
 
     func tableView(_: UITableView, heightForHeaderInSection sectionIndex: Int) -> CGFloat {
