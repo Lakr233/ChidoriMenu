@@ -211,6 +211,8 @@ extension ChidoriMenu {
             if action.chidoriKeepsMenuPresented {
                 action.execute()
                 view.isUserInteractionEnabled = true
+                // Reload table view to reflect any state changes
+                tableView.reloadData()
             } else {
                 presentingParent?.dismiss(animated: true) {
                     action.execute()

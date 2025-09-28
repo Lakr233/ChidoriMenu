@@ -472,16 +472,18 @@ struct Content: UIViewControllerRepresentable {
             {
                 if #available(iOS 16.0, macCatalyst 16.0, *) {
                     UIAction(
-                        title: "Keeps Menu Present",
-                        image: UIImage(systemName: "pin.circle"),
+                        title: "Toggle Checkmark",
+                        image: UIImage(systemName: "checkmark.circle"),
                         attributes: [.keepsMenuPresented]
-                    ) { _ in
-                        SPIndicatorView(title: "Menu stays open", preset: .done).present()
+                    ) { action in
+                        // Toggle state to demonstrate menu reload
+                        action.state = action.state == .on ? .off : .on
+                        SPIndicatorView(title: "State toggled: \(action.state == .on ? "ON" : "OFF")", preset: .done).present()
                     }
                 } else {
                     UIAction(
-                        title: "Keeps Menu Present (iOS 16+)",
-                        image: UIImage(systemName: "pin.circle"),
+                        title: "Toggle Checkmark (iOS 16+)",
+                        image: UIImage(systemName: "checkmark.circle"),
                         attributes: .disabled
                     ) { _ in
                         SPIndicatorView(title: "iOS 16+ only", preset: .error).present()
