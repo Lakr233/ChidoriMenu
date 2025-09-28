@@ -27,7 +27,9 @@ swift package generate-xcodeproj
 
 ### IMPORTANT MUST USE: Xcode Build Commands for Verify Code Changes
 
-You should not use `swift build` or `swift test` to verify code changes. Instead, always use `xcodebuild` commands to ensure compatibility with Xcode's build system and the example app.
+You should not use `swift build` or `swift test` to verify code changes. Instead, always use `xcodebuild` commands to ensure compatibility with Xcode's build system and the example app. 
+
+**ALWAYS pipe the output to `xcbeautify` for readable logs.**
 
 ```bash
 # Build with xcodebuild for xcworkspace (preferred)
