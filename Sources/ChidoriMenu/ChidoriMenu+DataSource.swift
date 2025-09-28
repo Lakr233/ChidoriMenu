@@ -227,13 +227,9 @@ extension ChidoriMenu {
 
         switch action.content {
         case let .action(action):
-            if action.chidoriIsDisabled {
-                return
-            }
+            if action.chidoriIsDisabled { return }
         case let .submenu(menu):
-            if menu.chidoriIsDisabled {
-                return
-            }
+            if menu.chidoriIsDisabled { return }
         }
 
         if let haptic = ChidoriMenuConfiguration.hapticFeedback {
