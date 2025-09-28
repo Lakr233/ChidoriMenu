@@ -61,28 +61,93 @@ enum EssentialTests {
 
     static let attributesMenu: MenuDefinition = .init(
         title: "Menu Attributes",
-        menu: .init(children: [
+        menu: .init(title: "Attributes Test", children: [
+            // MARK: - Normal Actions
+
             UIAction(title: "Normal Action", image: UIImage(systemName: "checkmark.circle")) { _ in
-                showIndicator("Normal")
+                showIndicator("Normal action executed")
             },
+
+            // MARK: - Disabled Attribute Tests
+
             UIAction(title: "Disabled Action", image: UIImage(systemName: "xmark.circle"), attributes: .disabled) { _ in
-                showIndicator("Should not appear")
+                showIndicator("This should not appear")
             },
+            UIAction(title: "Disabled + Destructive", image: UIImage(systemName: "trash.slash"), attributes: [.disabled, .destructive]) { _ in
+                showIndicator("Disabled destructive")
+            },
+
+            // MARK: - Destructive Attribute Tests
+
             UIAction(title: "Destructive Action", image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
-                showIndicator("Destructive")
+                showIndicator("Destructive action")
             },
+
+            // MARK: - Keeps Menu Presented Tests
+
             {
                 if #available(iOS 16.0, macCatalyst 16.0, *) {
-                    UIAction(title: "Toggle State", image: UIImage(systemName: "checkmark.circle"), attributes: [.keepsMenuPresented]) { action in
+                    UIAction(title: "Toggle Switch", image: UIImage(systemName: "switch.2"), attributes: [.keepsMenuPresented]) { action in
                         action.state = action.state == .on ? .off : .on
-                        showIndicator("State: \(action.state == .on ? "ON" : "OFF")")
+                        let stateText = action.state == .on ? "ON" : "OFF"
+                        showIndicator("Switch: \(stateText) | Attributes: \(action.attributes.contains(.keepsMenuPresented) ? "keepsPresented" : "normal")")
                     }
                 } else {
-                    UIAction(title: "Toggle State (iOS 16+)", image: UIImage(systemName: "checkmark.circle"), attributes: .disabled) { _ in
-                        showIndicator("iOS 16+ only")
+                    UIAction(title: "Toggle Switch (iOS 16+)", image: UIImage(systemName: "switch.2"), attributes: .disabled) { _ in
+                        showIndicator("Requires iOS 16+")
                     }
                 }
             }(),
+            {
+                if #available(iOS 16.0, macCatalyst 16.0, *) {
+                    UIAction(title: "Counter (keeps presented)", image: UIImage(systemName: "number.circle"), attributes: [.keepsMenuPresented]) { action in
+                        let currentCount = action.subtitle.flatMap { Int($0) } ?? 0
+                        let newCount = currentCount + 1
+                        action.subtitle = "\(newCount)"
+                        showIndicator("Count: \(newCount) | State: \(action.state.rawValue) | Keeps: \(action.attributes.contains(.keepsMenuPresented))")
+                    }
+                } else {
+                    UIAction(title: "Counter (iOS 16+)", image: UIImage(systemName: "number.circle"), attributes: .disabled) { _ in
+                        showIndicator("Requires iOS 16+")
+                    }
+                }
+            }(),
+            {
+                if #available(iOS 16.0, macCatalyst 16.0, *) {
+                    UIAction(title: "Status Toggle", image: UIImage(systemName: "circle.lefthalf.filled"), attributes: [.keepsMenuPresented]) { action in
+                        action.state = action.state == .mixed ? .on : action.state == .on ? .off : .mixed
+                        let stateDesc = action.state == .on ? "Active" : action.state == .off ? "Inactive" : "Mixed"
+                        showIndicator("Status: \(stateDesc) | Raw: \(action.state.rawValue)")
+                    }
+                } else {
+                    UIAction(title: "Status Toggle (iOS 16+)", image: UIImage(systemName: "circle.lefthalf.filled"), attributes: .disabled) { _ in
+                        showIndicator("Requires iOS 16+")
+                    }
+                }
+            }(),
+
+            // MARK: - Combined Attributes Test
+
+            UIMenu(title: "Combined Tests", children: [
+                UIAction(title: "Normal in Submenu", image: UIImage(systemName: "circle")) { _ in
+                    showIndicator("Normal submenu action")
+                },
+                UIAction(title: "Disabled in Submenu", image: UIImage(systemName: "circle.slash"), attributes: .disabled) { _ in
+                    showIndicator("Should not appear")
+                },
+                {
+                    if #available(iOS 16.0, macCatalyst 16.0, *) {
+                        UIAction(title: "Keeps Presented in Submenu", image: UIImage(systemName: "circle.dashed"), attributes: [.keepsMenuPresented]) { action in
+                            action.state = action.state == .on ? .off : .on
+                            showIndicator("Submenu toggle: \(action.state == .on ? "ON" : "OFF")")
+                        }
+                    } else {
+                        UIAction(title: "Keeps Presented (iOS 16+)", image: UIImage(systemName: "circle.dashed"), attributes: .disabled) { _ in
+                            showIndicator("Requires iOS 16+")
+                        }
+                    }
+                }(),
+            ]),
         ])
     )
 
