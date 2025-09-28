@@ -19,19 +19,40 @@ class ChidoriMenu: UIViewController {
     let panGestureRecognizer: UIPanGestureRecognizer = .init()
 
     var transitionController: ChidoriAnimationController?
+    private var resolvedWidth: CGFloat?
+
     var width: CGFloat {
-        calculateMenuWidth()
+        if let resolvedWidth { return resolvedWidth }
+        let computedWidth = calculateMenuWidth()
+        resolvedWidth = computedWidth
+        return computedWidth
     }
 
-    var heightOverride: CGFloat?
-
     var height: CGFloat {
-        heightOverride ?? tableView.sizeThatFits(
+        let measuredHeight = tableView.sizeThatFits(
             CGSize(
                 width: width,
                 height: CGFloat.greatestFiniteMagnitude
             )
         ).height.rounded(.up)
+
+        guard
+            let controller = presentationController as? ChidoriPresentationController,
+            let containerView = controller.containerView
+        else {
+            return measuredHeight
+        }
+
+        let safeArea = containerView.safeAreaInsets
+        let maximumHeight = max(
+            MenuLayout.minRowHeight,
+            containerView.bounds.height
+                - controller.minimalEdgeInset * 2
+                - safeArea.top
+                - safeArea.bottom
+        )
+
+        return min(measuredHeight, maximumHeight)
     }
 
     private var anchorViewToFrame: CGRect?

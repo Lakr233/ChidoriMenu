@@ -137,23 +137,25 @@ extension ChidoriMenu: UITableViewDelegate, UITableViewDataSource {
     }
 
     func updateMenuContainerFrame() {
+        tableView.layoutIfNeeded()
+
         let measuredHeight = tableView.contentSize.height.rounded(.up)
         let menuWidth = width
 
-        func applySize(_ size: CGSize) {
-            view.bounds.size = size
-            view.frame.size = size
-            view.setNeedsLayout()
-            view.layoutIfNeeded()
+        let applySize: (CGSize) -> Void = { size in
+            self.view.bounds.size = size
+            self.view.frame.size = size
+            self.view.setNeedsLayout()
+            self.view.layoutIfNeeded()
         }
 
-        let intrinsicSize = CGSize(width: menuWidth, height: measuredHeight)
-        heightOverride = measuredHeight
+        guard let controller = presentationController as? ChidoriPresentationController else {
+            applySize(.init(width: menuWidth, height: measuredHeight))
+            return
+        }
 
-        guard let controller = presentationController as? ChidoriPresentationController,
-              let containerView = controller.containerView
-        else {
-            applySize(intrinsicSize)
+        guard let containerView = controller.containerView else {
+            applySize(.init(width: menuWidth, height: measuredHeight))
             return
         }
 
@@ -167,13 +169,14 @@ extension ChidoriMenu: UITableViewDelegate, UITableViewDataSource {
         )
         let clampedHeight = min(measuredHeight, maximumHeight)
 
-        heightOverride = clampedHeight
+        applySize(.init(width: menuWidth, height: clampedHeight))
 
         let newFrame = controller.frameOfPresentedViewInContainerView
         view.frame = newFrame
         controller.presentedView?.frame = newFrame
         anchor(to: newFrame)
-        view.layoutIfNeeded()
+
+        containerView.setNeedsLayout()
         containerView.layoutIfNeeded()
     }
 
