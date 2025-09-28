@@ -14,8 +14,5 @@ struct MenuDefinition {
 }
 
 enum MenuRegistry {
-    static let allMenus: [MenuDefinition] = CoreFunctionalityTests.allTests +
-        MenuStructureTests.allTests +
-        AdvancedFeaturesTests.allTests +
-        ProductionExamples.allExamples
+    static let allMenus: [MenuDefinition] = EssentialTests.allTests + AdvancedExamples.allExamples
 }

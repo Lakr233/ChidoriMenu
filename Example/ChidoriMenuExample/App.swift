@@ -37,7 +37,6 @@ struct Content: UIViewControllerRepresentable {
             super.viewDidLoad()
             tableView.delegate = self
             tableView.dataSource = self
-            tableView.tableFooterView = FooterButton()
             view.addSubview(tableView)
 
             ChidoriMenuConfiguration.accentColor = .systemPink
@@ -103,34 +102,4 @@ struct Content: UIViewControllerRepresentable {
     }
 
     func updateUIViewController(_: ContentController, context _: Context) {}
-}
-
-class FooterButton: UIButton {
-    init() {
-        super.init(frame: .init(x: 0, y: 0, width: 200, height: 44))
-        setTitle("Test Menu", for: .normal)
-        setTitleColor(.systemBlue, for: .normal)
-        titleLabel?.font = .preferredFont(forTextStyle: .footnote)
-
-        interactions = [UIContextMenuInteraction(delegate: self)]
-
-        addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
-    }
-
-    @available(*, unavailable)
-    required init?(coder _: NSCoder) {
-        fatalError()
-    }
-
-    @objc func buttonTapped() {
-        presentMenu()
-    }
-
-    override func contextMenuInteraction(_: UIContextMenuInteraction, configurationForMenuAtLocation _: CGPoint) -> UIContextMenuConfiguration? {
-        .init(identifier: nil, previewProvider: nil) { items in
-            .init(title: "Context Menu", children: items + [UIAction(title: "Context Action") { _ in
-                SPIndicator.present(title: "Context Action", haptic: .success)
-            }])
-        }
-    }
 }
