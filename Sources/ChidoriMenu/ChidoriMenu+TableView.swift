@@ -204,6 +204,32 @@ extension ChidoriMenu: UITableViewDelegate, UITableViewDataSource {
         }
     }
 
+    func reloadTableView(animated: Bool, completion: (() -> Void)? = nil) {
+        let reloadBlock = {
+            self.tableView.reloadData()
+            self.tableView.layoutIfNeeded()
+        }
+
+        guard animated,
+              UIView.areAnimationsEnabled,
+              tableView.window != nil
+        else {
+            reloadBlock()
+            completion?()
+            return
+        }
+
+        UIView.transition(
+            with: tableView,
+            duration: 0.25,
+            options: [.transitionCrossDissolve, .allowUserInteraction, .beginFromCurrentState]
+        ) {
+            reloadBlock()
+        } completion: { _ in
+            completion?()
+        }
+    }
+
     func tableView(_: UITableView, heightForHeaderInSection sectionIndex: Int) -> CGFloat {
         guard let section = section(at: sectionIndex) else {
             return 0

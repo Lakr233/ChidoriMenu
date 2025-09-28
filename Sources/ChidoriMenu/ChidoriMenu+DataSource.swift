@@ -116,7 +116,10 @@ extension ChidoriMenu {
         assert(Thread.isMainThread)
         let contents = flattenedContents(from: menu)
         dataSource = contents
-        tableView.reloadData()
+        let shouldAnimate = tableView.window != nil && UIView.areAnimationsEnabled
+        reloadTableView(animated: shouldAnimate) { [weak self] in
+            self?.updateMenuSize()
+        }
     }
 
     func flattenedContents(from menu: UIMenu) -> DataSourceContents {
@@ -253,10 +256,9 @@ extension ChidoriMenu {
             if action.chidoriKeepsMenuPresented {
                 action.execute()
                 view.isUserInteractionEnabled = true
-                // Reload table view to reflect any state changes
-                tableView.reloadData()
-                // Update menu size after reload
-                updateMenuSize()
+                reloadTableView(animated: true) { [weak self] in
+                    self?.updateMenuSize()
+                }
             } else {
                 presentingParent?.dismiss(animated: true) {
                     action.execute()
