@@ -164,7 +164,12 @@ enum EssentialTests {
                 UIAction(title: "Sub Action B", image: UIImage(systemName: "b.circle")) { _ in showIndicator("B") },
                 UIAction(title: "Sub Action C", image: UIImage(systemName: "c.circle")) { _ in showIndicator("C") },
             ]),
-            UIMenu(options: [.displayInline], children: [
+            UIMenu(title: "Group with Title", options: [.displayInline], children: [
+                UIAction(title: "Sub Action D", image: UIImage(systemName: "d.circle")) { _ in showIndicator("D") },
+                UIAction(title: "Sub Action E", image: UIImage(systemName: "e.circle")) { _ in showIndicator("E") },
+                UIAction(title: "Sub Action F", image: UIImage(systemName: "f.circle")) { _ in showIndicator("F") },
+            ]),
+            UIMenu(title: "Folded without Icon", children: [
                 UIAction(title: "Sub Action D", image: UIImage(systemName: "d.circle")) { _ in showIndicator("D") },
                 UIAction(title: "Sub Action E", image: UIImage(systemName: "e.circle")) { _ in showIndicator("E") },
                 UIAction(title: "Sub Action F", image: UIImage(systemName: "f.circle")) { _ in showIndicator("F") },

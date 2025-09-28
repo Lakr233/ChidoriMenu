@@ -110,30 +110,21 @@ extension ChidoriMenu: UITableViewDelegate, UITableViewDataSource {
 
         let menuWidth = width
 
-        // Calculate available text width matching the cell layout logic
         let titleX: CGFloat = if section.hasAnyIcon {
-            // All text aligned after icon space when any item in section has an icon
             MenuLayout.horizontalPadding + MenuLayout.iconSize + MenuLayout.spacing
         } else {
-            // When no icons in section, align text to left edge
             MenuLayout.horizontalPadding
         }
 
-        // Calculate trailing icon space
         let trailingIconSpace: CGFloat = switch item.content {
         case let .action(action):
-            // Check if trailing icon will be visible
-            (action.state != .off)
-                ? MenuLayout.iconSize
-                + MenuLayout.spacing : 0
+            action.state != .off ? MenuLayout.iconSize + MenuLayout.spacing : 0
         case .submenu:
-            // Submenus always have trailing disclosure indicator
             MenuLayout.iconSize + MenuLayout.spacing
         }
 
         let availableTextWidth = menuWidth - titleX - MenuLayout.horizontalPadding - trailingIconSpace
 
-        // Calculate text height
         let font = UIFont.preferredFont(forTextStyle: .body)
         let textHeight = (item.title as NSString).boundingRect(
             with: CGSize(width: availableTextWidth, height: .greatestFiniteMagnitude),
@@ -147,10 +138,8 @@ extension ChidoriMenu: UITableViewDelegate, UITableViewDataSource {
     }
 
     func updateMenuSize() {
-        // Force table view to recalculate its content size
         tableView.layoutIfNeeded()
 
-        // Update the view controller's preferred content size with animation
         UIView.animate(
             withDuration: 0.3,
             delay: 0,
@@ -159,7 +148,6 @@ extension ChidoriMenu: UITableViewDelegate, UITableViewDataSource {
         ) {
             self.preferredContentSize = CGSize(width: self.width, height: self.height)
 
-            // Notify presentation controller to update frame
             self.presentationController?.containerView?.setNeedsLayout()
             self.presentationController?.containerView?.layoutIfNeeded()
         }
