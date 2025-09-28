@@ -97,12 +97,7 @@ extension ChidoriMenu: UITableViewDelegate, UITableViewDataSource {
             }
         }
 
-        // Get touch location from table view's gesture recognizers
-        var touchLocation: CGPoint? = nil
-        if let tapGesture = tableView.gestureRecognizers?.first(where: { $0 is UITapGestureRecognizer }) as? UITapGestureRecognizer {
-            touchLocation = tapGesture.location(in: tableView)
-        }
-        executeAction(indexPath, touchLocation: touchLocation)
+        executeAction(indexPath, touchLocation: nil) // TODO: Better touch location
     }
 
     func tableView(_: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
