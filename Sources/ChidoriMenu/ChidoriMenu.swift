@@ -236,9 +236,9 @@ class ChidoriMenu: UIViewController {
         }
 
         // Calculate width based on content
-        let horizontalPadding: CGFloat = 8
+        let horizontalPadding: CGFloat = 16
         let iconSize: CGFloat = 22
-        let spacing: CGFloat = 8
+        let spacing: CGFloat = 12
         let minWidth: CGFloat = 200
         let maxWidth: CGFloat = 320
 

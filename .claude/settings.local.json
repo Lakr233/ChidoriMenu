@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(xcodebuild:*)"
+      "Bash(xcodebuild:*)",
+      "Bash(xcbeautify)"
     ],
     "deny": [],
     "ask": []

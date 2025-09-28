@@ -121,10 +121,10 @@ extension ChidoriMenu {
             super.layoutSubviews()
 
             let contentBounds = contentView.bounds
-            let horizontalPadding: CGFloat = 8
-            let verticalPadding: CGFloat = 8
+            let horizontalPadding: CGFloat = 16
+            let verticalPadding: CGFloat = 11
             let iconSize: CGFloat = 22
-            let spacing: CGFloat = 8
+            let spacing: CGFloat = 12
 
             // Top separator
             topSep.frame = CGRect(
@@ -134,14 +134,10 @@ extension ChidoriMenu {
                 height: 0.5
             )
 
-            // Calculate vertical center position for icons and label
-            let contentHeight = contentBounds.height - verticalPadding * 2
-            let centerY = verticalPadding + contentHeight / 2
-
             // Icon - vertically centered
             let iconFrame = CGRect(
                 x: horizontalPadding,
-                y: centerY - iconSize / 2,
+                y: (contentBounds.height - iconSize) / 2,
                 width: iconSize,
                 height: iconSize
             )
@@ -150,25 +146,26 @@ extension ChidoriMenu {
             // Trailing icon - vertically centered
             let trailingIconFrame = CGRect(
                 x: contentBounds.width - horizontalPadding - iconSize,
-                y: centerY - iconSize / 2,
+                y: (contentBounds.height - iconSize) / 2,
                 width: iconSize,
                 height: iconSize
             )
             trailingIconView.frame = trailingIconFrame
 
-            // Title label - vertically centered with proper height
+            // Title label - use consistent padding for multi-line support
             let titleX = iconView.isHidden ? horizontalPadding : iconFrame.maxX + spacing
             let titleWidth = contentBounds.width - titleX - horizontalPadding - (trailingIconView.isHidden ? 0 : iconSize + spacing)
 
             // Calculate label height based on content
             let labelHeight = titleLabel.sizeThatFits(CGSize(width: titleWidth, height: .greatestFiniteMagnitude)).height
-            let labelY = centerY - labelHeight / 2
 
+            // Use top alignment with consistent padding for multi-line text
+            // This matches Apple's native menu behavior
             titleLabel.frame = CGRect(
                 x: titleX,
-                y: labelY,
+                y: verticalPadding,
                 width: titleWidth,
-                height: min(labelHeight, contentHeight)
+                height: min(labelHeight, contentBounds.height - verticalPadding * 2)
             )
         }
     }
