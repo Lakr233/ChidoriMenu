@@ -498,6 +498,33 @@ struct Content: UIViewControllerRepresentable {
             },
         ]))
 
+        let dynamicWidthMenu: Menu = .init(title: "Dynamic Width Test", menu: .init(children: [
+            UIAction(title: "Short") { _ in
+                SPIndicatorView(title: "Short action", preset: .done).present()
+            },
+            UIAction(title: "Medium length action") { _ in
+                SPIndicatorView(title: "Medium action", preset: .done).present()
+            },
+            UIAction(title: "Very long action title that should expand the menu width") { _ in
+                SPIndicatorView(title: "Long action", preset: .done).present()
+            },
+            UIAction(
+                title: "Action with icon",
+                image: UIImage(systemName: "star")
+            ) { _ in
+                SPIndicatorView(title: "Icon action", preset: .done).present()
+            },
+        ]))
+
+        let customWidthMenu: Menu = .init(title: "Custom Width Test", menu: .init(children: [
+            UIAction(title: "This menu uses custom width") { _ in
+                SPIndicatorView(title: "Custom width", preset: .done).present()
+            },
+            UIAction(title: "Set to 350 points") { _ in
+                SPIndicatorView(title: "350 width", preset: .done).present()
+            },
+        ]))
+
         var menuList: [Menu] { [
             firstMenu,
             secondMenu,
@@ -508,6 +535,8 @@ struct Content: UIViewControllerRepresentable {
             backportMenu,
             attributesMenu,
             keepsMenuPresentedMenu,
+            dynamicWidthMenu,
+            customWidthMenu,
         ] }
 
         func numberOfSections(in _: UITableView) -> Int {
@@ -538,6 +567,14 @@ struct Content: UIViewControllerRepresentable {
                 height: 0
             )
             let menu = menuList[indexPath.row].menu
+
+            // Configure custom width for the custom width test menu
+            if menuList[indexPath.row].title == "Custom Width Test" {
+                ChidoriMenuConfiguration.suggestedWidth = 350
+            } else {
+                ChidoriMenuConfiguration.suggestedWidth = nil
+            }
+
             anchorView.present(menu: menu)
             anchorView.removeFromSuperview()
         }

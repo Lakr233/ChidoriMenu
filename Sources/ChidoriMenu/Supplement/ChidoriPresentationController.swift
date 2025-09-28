@@ -54,7 +54,7 @@ class ChidoriPresentationController: UIPresentationController {
         if let heightLimit = containerView?.bounds.height {
             height = min(height, heightLimit * 0.75)
         }
-        let menuSize = CGSize(width: ChidoriMenu.width, height: height)
+        let menuSize = CGSize(width: menu.width, height: height)
         let originatingPoint = calculateOriginatingPoint(
             anchorPoint: menu.anchorPoint,
             menuSize: menuSize
@@ -69,7 +69,7 @@ class ChidoriPresentationController: UIPresentationController {
         guard let containerView else { return .zero }
 
         let x: CGFloat = {
-            let requiredMinX = anchorPoint.x - ChidoriMenu.width / 2
+            let requiredMinX = anchorPoint.x - menuSize.width / 2
             let maxPossibleX = minimalEdgeInset
                 + containerView.safeAreaInsets.left
             let rightMostPermissableXPosition = containerView.bounds.width

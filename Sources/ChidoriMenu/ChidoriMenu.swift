@@ -19,10 +19,14 @@ class ChidoriMenu: UIViewController {
     let panGestureRecognizer: UIPanGestureRecognizer = .init()
 
     var transitionController: ChidoriAnimationController?
+    var width: CGFloat {
+        calculateMenuWidth()
+    }
+
     var height: CGFloat {
         tableView.sizeThatFits(
             CGSize(
-                width: ChidoriMenu.width,
+                width: width,
                 height: CGFloat.greatestFiniteMagnitude
             )
         ).height.rounded(.up)
@@ -191,7 +195,7 @@ class ChidoriMenu: UIViewController {
             roundedRect: .init(
                 x: 0,
                 y: 0,
-                width: ChidoriMenu.width,
+                width: width,
                 height: tableView.frame.height
             ),
             cornerRadius: ChidoriMenu.cornerRadius
@@ -223,6 +227,68 @@ class ChidoriMenu: UIViewController {
             executing(currentParent)
             parent = currentParent.presentingViewController as? ChidoriMenu
         }
+    }
+
+    private func calculateMenuWidth() -> CGFloat {
+        // Use suggested width if provided
+        if let suggestedWidth = ChidoriMenuConfiguration.suggestedWidth {
+            return suggestedWidth
+        }
+
+        // Calculate width based on content
+        let horizontalPadding: CGFloat = 8
+        let iconSize: CGFloat = 22
+        let spacing: CGFloat = 8
+        let minWidth: CGFloat = 200
+        let maxWidth: CGFloat = 320
+
+        var maxContentWidth: CGFloat = minWidth
+
+        // Calculate maximum text width across all menu items
+        for section in dataSource {
+            for content in section.contents {
+                switch content.content {
+                case let .action(action):
+                    let textWidth = calculateTextWidth(for: action.title)
+                    var itemWidth = horizontalPadding * 2 + textWidth
+
+                    // Add icon space if present
+                    if action.image != nil {
+                        itemWidth += iconSize + spacing
+                    }
+
+                    // Add trailing icon space if present
+                    if action.chidoriKeepsMenuPresented || action.state != .off {
+                        itemWidth += iconSize + spacing
+                    }
+
+                    maxContentWidth = max(maxContentWidth, itemWidth)
+
+                case let .submenu(menu):
+                    let textWidth = calculateTextWidth(for: menu.title)
+                    var itemWidth = horizontalPadding * 2 + textWidth
+
+                    // Add icon space if present
+                    if menu.image != nil {
+                        itemWidth += iconSize + spacing
+                    }
+
+                    // Always add trailing icon for submenus
+                    itemWidth += iconSize + spacing
+
+                    maxContentWidth = max(maxContentWidth, itemWidth)
+                }
+            }
+        }
+
+        return min(max(maxContentWidth, minWidth), maxWidth)
+    }
+
+    private func calculateTextWidth(for text: String) -> CGFloat {
+        let font = UIFont.preferredFont(forTextStyle: .body)
+        let attributes = [NSAttributedString.Key.font: font]
+        let size = (text as NSString).size(withAttributes: attributes)
+        return size.width
     }
 }
 
