@@ -134,19 +134,19 @@ extension ChidoriMenu {
 
             // Icon - vertically centered
             let iconFrame = CGRect(
-                x: ChidoriMenu.horizontalPadding,
-                y: (contentBounds.height - ChidoriMenu.iconSize) / 2,
-                width: ChidoriMenu.iconSize,
-                height: ChidoriMenu.iconSize
+                x: MenuLayout.horizontalPadding,
+                y: (contentBounds.height - MenuLayout.iconSize) / 2,
+                width: MenuLayout.iconSize,
+                height: MenuLayout.iconSize
             )
             iconView.frame = iconFrame
 
             // Trailing icon - vertically centered
             let trailingIconFrame = CGRect(
-                x: contentBounds.width - ChidoriMenu.horizontalPadding - ChidoriMenu.iconSize,
-                y: (contentBounds.height - ChidoriMenu.iconSize) / 2,
-                width: ChidoriMenu.iconSize,
-                height: ChidoriMenu.iconSize
+                x: contentBounds.width - MenuLayout.horizontalPadding - MenuLayout.iconSize,
+                y: (contentBounds.height - MenuLayout.iconSize) / 2,
+                width: MenuLayout.iconSize,
+                height: MenuLayout.iconSize
             )
             trailingIconView.frame = trailingIconFrame
 
@@ -154,12 +154,12 @@ extension ChidoriMenu {
             // Use consistent text alignment when any menu item has an icon
             let titleX: CGFloat = if hasAnyIcon {
                 // All text aligned after icon space when any item has an icon
-                ChidoriMenu.horizontalPadding + ChidoriMenu.iconSize + ChidoriMenu.spacing
+                MenuLayout.horizontalPadding + MenuLayout.iconSize + MenuLayout.spacing
             } else {
                 // Original behavior when no icons present
-                iconView.isHidden ? ChidoriMenu.horizontalPadding : iconFrame.maxX + ChidoriMenu.spacing
+                iconView.isHidden ? MenuLayout.horizontalPadding : iconFrame.maxX + MenuLayout.spacing
             }
-            let titleWidth = contentBounds.width - titleX - ChidoriMenu.horizontalPadding - (trailingIconView.isHidden ? 0 : ChidoriMenu.iconSize + ChidoriMenu.spacing)
+            let titleWidth = contentBounds.width - titleX - MenuLayout.horizontalPadding - (trailingIconView.isHidden ? 0 : MenuLayout.iconSize + MenuLayout.spacing)
 
             // Calculate label height based on content
             let labelHeight = titleLabel.sizeThatFits(CGSize(width: titleWidth, height: .greatestFiniteMagnitude)).height
@@ -198,12 +198,12 @@ extension ChidoriMenu {
             super.layoutSubviews()
 
             let titleHeight = titleLabel.font.lineHeight
-            let titleY = (bounds.height - titleHeight) / 2 - ChidoriMenu.sectionTopPadding / 2
+            let titleY = (bounds.height - titleHeight) / 2 - MenuLayout.sectionTopPadding / 2
 
             titleLabel.frame = CGRect(
-                x: ChidoriMenu.horizontalPadding,
+                x: MenuLayout.horizontalPadding,
                 y: titleY,
-                width: bounds.width - ChidoriMenu.horizontalPadding * 2,
+                width: bounds.width - MenuLayout.horizontalPadding * 2,
                 height: titleHeight
             )
         }

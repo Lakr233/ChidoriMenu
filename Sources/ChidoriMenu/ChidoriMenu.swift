@@ -94,12 +94,12 @@ class ChidoriMenu: UIViewController {
         shadowView.layer.shadowOpacity = 1
         shadowView.layer.shadowOffset = .zero
         shadowView.layer.shadowRadius = 8
-        shadowView.layer.cornerRadius = ChidoriMenu.cornerRadius
+        shadowView.layer.cornerRadius = MenuLayout.cornerRadius
         view.addSubview(shadowView)
 
         backgroundView.backgroundColor = ChidoriMenuConfiguration.backgroundColor
         backgroundView.layer.masksToBounds = true
-        backgroundView.layer.cornerRadius = ChidoriMenu.cornerRadius
+        backgroundView.layer.cornerRadius = MenuLayout.cornerRadius
         backgroundView.layer.cornerCurve = .continuous
         view.addSubview(backgroundView)
 
@@ -118,9 +118,9 @@ class ChidoriMenu: UIViewController {
             tableView.sectionHeaderTopPadding = Self.sectionTopPadding
         }
         tableView.verticalScrollIndicatorInsets = UIEdgeInsets(
-            top: ChidoriMenu.cornerRadius,
+            top: MenuLayout.cornerRadius,
             left: 0.0,
-            bottom: ChidoriMenu.cornerRadius,
+            bottom: MenuLayout.cornerRadius,
             right: 0.0
         )
         backgroundView.addSubview(tableView)
@@ -199,7 +199,7 @@ class ChidoriMenu: UIViewController {
                 width: width,
                 height: tableView.frame.height
             ),
-            cornerRadius: ChidoriMenu.cornerRadius
+            cornerRadius: MenuLayout.cornerRadius
         ).cgPath
 
         let isTableViewNotFullyVisible = tableView.contentSize.height > view.bounds.height
@@ -210,7 +210,7 @@ class ChidoriMenu: UIViewController {
     override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
         var superController: UIViewController? = presentingViewController
         while let menu = superController as? ChidoriMenu {
-            menu.menuStackScaleFactor = min(1.0, menu.menuStackScaleFactor + ChidoriMenu.stackScaleFactor)
+            menu.menuStackScaleFactor = min(1.0, menu.menuStackScaleFactor + MenuLayout.stackScaleFactor)
             superController = menu.presentingViewController
         }
         super.dismiss(animated: flag, completion: completion)
@@ -248,31 +248,31 @@ class ChidoriMenu: UIViewController {
                 switch content.content {
                 case let .action(action):
                     let textWidth = calculateTextWidth(for: action.title)
-                    var itemWidth = ChidoriMenu.horizontalPadding * 2 + textWidth
+                    var itemWidth = MenuLayout.horizontalPadding * 2 + textWidth
 
                     // Add icon space if present
                     if action.image != nil {
-                        itemWidth += ChidoriMenu.iconSize + ChidoriMenu.spacing
+                        itemWidth += MenuLayout.iconSize + MenuLayout.spacing
                     }
 
                     // Add trailing icon space if present
                     if action.chidoriKeepsMenuPresented || action.state != .off {
-                        itemWidth += ChidoriMenu.iconSize + ChidoriMenu.spacing
+                        itemWidth += MenuLayout.iconSize + MenuLayout.spacing
                     }
 
                     maxContentWidth = max(maxContentWidth, itemWidth)
 
                 case let .submenu(menu):
                     let textWidth = calculateTextWidth(for: menu.title)
-                    var itemWidth = ChidoriMenu.horizontalPadding * 2 + textWidth
+                    var itemWidth = MenuLayout.horizontalPadding * 2 + textWidth
 
                     // Add icon space if present
                     if menu.image != nil {
-                        itemWidth += ChidoriMenu.iconSize + ChidoriMenu.spacing
+                        itemWidth += MenuLayout.iconSize + MenuLayout.spacing
                     }
 
                     // Always add trailing icon for submenus
-                    itemWidth += ChidoriMenu.iconSize + ChidoriMenu.spacing
+                    itemWidth += MenuLayout.iconSize + MenuLayout.spacing
 
                     maxContentWidth = max(maxContentWidth, itemWidth)
                 }

@@ -276,10 +276,10 @@ extension ChidoriMenu {
         case let .submenu(menu):
             cell.present(menu: menu, anchorPoint: .init(
                 x: cell.bounds.midX,
-                y: cell.bounds.minY - ChidoriMenu.offsetY
+                y: cell.bounds.minY - MenuLayout.offsetY
             ))
             forEachMenuInStack {
-                $0.menuStackScaleFactor -= ChidoriMenu.stackScaleFactor
+                $0.menuStackScaleFactor -= MenuLayout.stackScaleFactor
             }
         }
     }

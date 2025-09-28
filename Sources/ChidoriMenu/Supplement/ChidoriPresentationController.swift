@@ -24,7 +24,7 @@ class ChidoriPresentationController: UIPresentationController {
         guard let containerView else { return }
         containerView.addSubview(dimmView)
         dimmView.addTarget(self, action: #selector(dimmViewTapped), for: .touchUpInside)
-        dimmView.backgroundColor = ChidoriMenu.dimmingBackgroundColor
+        dimmView.backgroundColor = MenuLayout.dimmingBackgroundColor
 
         dimmView.alpha = 0.0
         if let transitionCoordinator = presentingViewController.transitionCoordinator {
@@ -83,9 +83,9 @@ class ChidoriPresentationController: UIPresentationController {
         }()
 
         let y: CGFloat = {
-            let maxY = anchorPoint.y + menuSize.height + minimalEdgeInset + ChidoriMenu.offsetY
+            let maxY = anchorPoint.y + menuSize.height + minimalEdgeInset + MenuLayout.offsetY
             let allowedY = containerView.bounds.height - containerView.safeAreaInsets.bottom
-            if maxY < allowedY { return anchorPoint.y + ChidoriMenu.offsetY /* move below a little bit */ }
+            if maxY < allowedY { return anchorPoint.y + MenuLayout.offsetY /* move below a little bit */ }
             // if not, iOS tries to keep as much in the bottom half of the screen as possible
             // to be closer to where the thumb normally is, presumably
             return containerView.bounds.height

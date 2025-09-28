@@ -107,7 +107,7 @@ extension ChidoriMenu: UITableViewDelegate, UITableViewDataSource {
         }
 
         let menuWidth = width
-        var availableTextWidth = menuWidth - ChidoriMenu.horizontalPadding * 2
+        var availableTextWidth = menuWidth - MenuLayout.horizontalPadding * 2
 
         // Use consistent text alignment when any menu item has an icon
         if hasAnyIcon {
