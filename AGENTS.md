@@ -25,6 +25,21 @@ swift package generate-xcodeproj
 - The main package is located in `Sources/ChidoriMenu/`
 - Platform support: iOS 13.0+, macCatalyst 13.0+
 
+### IMPORTANT MUST USE: Xcode Build Commands for Verify Code Changes
+
+You should not use `swift build` or `swift test` to verify code changes. Instead, always use `xcodebuild` commands to ensure compatibility with Xcode's build system and the example app.
+
+```bash
+# Build with xcodebuild for xcworkspace (preferred)
+xcodebuild -workspace Example/ChidoriMenuExample.xcworkspace -scheme ChidoriMenuExample -destination 'platform=iOS Simulator,name=iPhone Air' build | xcbeautify
+
+# Build with xcodebuild for xcodeproj
+xcodebuild -project Example/ChidoriMenuExample.xcodeproj -scheme ChidoriMenuExample -destination 'platform=iOS Simulator,name=iPhone Air' build | xcbeautify
+
+# Clean build
+xcodebuild -workspace Example/ChidoriMenuExample.xcworkspace -scheme ChidoriMenuExample clean | xcbeautify
+```
+
 ## Architecture
 
 ### Core Components

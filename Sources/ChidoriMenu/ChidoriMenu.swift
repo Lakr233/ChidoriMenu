@@ -10,6 +10,7 @@ import UIKit
 class ChidoriMenu: UIViewController {
     let tableView: UITableView
     var dataSource: DataSourceContents = []
+    var hasAnyIcon: Bool = false
 
     let menu: UIMenu
     let anchorPoint: CGPoint
@@ -135,7 +136,7 @@ class ChidoriMenu: UIViewController {
         panGestureRecognizer.cancelsTouchesInView = true
         tableView.addGestureRecognizer(panGestureRecognizer)
 
-        updateDataSourceContents()
+        updateDataSource()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -152,12 +153,12 @@ class ChidoriMenu: UIViewController {
         tableView.becomeFirstResponder()
     }
 
-    func anchorView(frame: CGRect) {
+    func anchor(to frame: CGRect) {
         anchorViewToFrame = frame
         view.setNeedsLayout()
     }
 
-    func unlockViewFrame() {
+    func removeAnchor() {
         anchorViewToFrame = nil
     }
 
@@ -221,10 +222,10 @@ class ChidoriMenu: UIViewController {
         dismiss(animated: true)
     }
 
-    func iterateMenusInStack(_ executing: @escaping (ChidoriMenu) -> Void) {
+    func forEachMenuInStack(_ execute: @escaping (ChidoriMenu) -> Void) {
         var parent: ChidoriMenu? = self
         while let currentParent = parent {
-            executing(currentParent)
+            execute(currentParent)
             parent = currentParent.presentingViewController as? ChidoriMenu
         }
     }

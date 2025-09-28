@@ -8,15 +8,15 @@
 import UIKit
 
 extension ChidoriMenu: UITableViewDelegate, UITableViewDataSource {
-    func sectionContents(forIndexPath indexPath: IndexPath) -> MenuSection? {
-        sectionContents(for: indexPath.section)
+    func section(at indexPath: IndexPath) -> MenuSection? {
+        section(at: indexPath.section)
     }
 
-    func sectionContents(for sectionIndex: Int) -> MenuSection? {
-        dataSource[sectionIndex].section
+    func section(at index: Int) -> MenuSection? {
+        dataSource[index].section
     }
 
-    func item(forIndexPath indexPath: IndexPath) -> MenuContent? {
+    func item(at indexPath: IndexPath) -> MenuContent? {
         dataSource[indexPath.section].contents[indexPath.row]
     }
 
@@ -33,31 +33,32 @@ extension ChidoriMenu: UITableViewDelegate, UITableViewDataSource {
     }
 
     func cell(forRowAtIndex indexPath: IndexPath, dataSource _: DataSourceContents) -> UITableViewCell? {
-        guard let section = sectionContents(forIndexPath: indexPath),
-              let item = item(forIndexPath: indexPath)
+        guard let section = section(at: indexPath),
+              let item = item(at: indexPath)
         else { return nil }
         let cell = tableView.dequeueReusableCell(
             withIdentifier: String(describing: Cell.self),
             for: indexPath
         ) as! Cell
+        cell.hasAnyIcon = hasAnyIcon
         switch item.content {
         case let .action(action):
-            cell.menuTitle = action.title
-            cell.iconImage = action.image
+            cell.title = action.title
+            cell.icon = action.image
             cell.isDestructive = action.attributes.contains(.destructive)
             cell.isDisabled = action.chidoriIsDisabled
             switch action.state {
-            case .on: cell.trailingItem = .checkmark
-            case .mixed: cell.trailingItem = .detailButton
-            default: cell.trailingItem = .none
+            case .on: cell.trailingAccessory = .checkmark
+            case .mixed: cell.trailingAccessory = .detailButton
+            default: cell.trailingAccessory = .none
             }
             cell.trailingIconView.tintColor = .label
         case let .submenu(menu):
-            cell.menuTitle = menu.title
-            cell.iconImage = menu.image
+            cell.title = menu.title
+            cell.icon = menu.image
             cell.isDestructive = menu.options.contains(.destructive)
             cell.isDisabled = menu.chidoriIsDisabled
-            cell.trailingItem = .disclosureIndicator
+            cell.trailingAccessory = .disclosureIndicator
             cell.trailingIconView.tintColor = .label
         }
         if section.title.isEmpty, indexPath.row == 0, indexPath.section == 0 {
@@ -81,7 +82,7 @@ extension ChidoriMenu: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let action = item(forIndexPath: indexPath) else { return }
+        guard let action = item(at: indexPath) else { return }
 
         // Check if action is disabled
         switch action.content {
@@ -101,17 +102,23 @@ extension ChidoriMenu: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        guard let item = item(forIndexPath: indexPath) else {
+        guard let item = item(at: indexPath) else {
             return UITableView.automaticDimension
         }
 
         let menuWidth = width
         var availableTextWidth = menuWidth - ChidoriMenu.horizontalPadding * 2
 
+        // Use consistent text alignment when any menu item has an icon
+        if hasAnyIcon {
+            // All text aligned after icon space when any item has an icon
+            availableTextWidth -= ChidoriMenu.iconSize + ChidoriMenu.spacing
+        }
+
         switch item.content {
         case let .action(action):
-            // Subtract icon space if present
-            if action.image != nil {
+            // Subtract icon space if present (unless already accounted for)
+            if action.image != nil && !hasAnyIcon {
                 availableTextWidth -= ChidoriMenu.iconSize + ChidoriMenu.spacing
             }
             // Subtract trailing icon space if present
@@ -120,8 +127,8 @@ extension ChidoriMenu: UITableViewDelegate, UITableViewDataSource {
             }
 
         case let .submenu(menu):
-            // Subtract icon space if present
-            if menu.image != nil {
+            // Subtract icon space if present (unless already accounted for)
+            if menu.image != nil, !hasAnyIcon {
                 availableTextWidth -= ChidoriMenu.iconSize + ChidoriMenu.spacing
             }
             // Always subtract trailing icon for submenus
@@ -141,16 +148,16 @@ extension ChidoriMenu: UITableViewDelegate, UITableViewDataSource {
         return rowHeight
     }
 
-    func tableView(_: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        guard let section = sectionContents(for: section) else {
+    func tableView(_: UITableView, heightForHeaderInSection sectionIndex: Int) -> CGFloat {
+        guard let section = section(at: sectionIndex) else {
             return 0
         }
         if section.title.isEmpty { return 0 }
         return UIFont.preferredFont(forTextStyle: .footnote).lineHeight + 8
     }
 
-    func tableView(_: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        guard let section = sectionContents(for: section) else {
+    func tableView(_: UITableView, viewForHeaderInSection sectionIndex: Int) -> UIView? {
+        guard let section = section(at: sectionIndex) else {
             return nil
         }
         if section.title.isEmpty { return nil }

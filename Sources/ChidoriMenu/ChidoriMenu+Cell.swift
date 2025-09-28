@@ -9,9 +9,9 @@ import UIKit
 
 extension ChidoriMenu {
     class Cell: UITableViewCell {
-        var menuTitle: String = "" {
+        var title: String = "" {
             didSet {
-                titleLabel.text = menuTitle
+                titleLabel.text = title
                 layoutIfNeeded()
             }
         }
@@ -33,16 +33,16 @@ extension ChidoriMenu {
             }
         }
 
-        var iconImage: UIImage? {
+        var icon: UIImage? {
             didSet {
-                iconView.image = iconImage
-                iconView.isHidden = iconImage == nil
+                iconView.image = icon
+                iconView.isHidden = icon == nil
             }
         }
 
-        var trailingItem: UITableViewCell.AccessoryType = .none {
+        var trailingAccessory: UITableViewCell.AccessoryType = .none {
             didSet {
-                switch trailingItem {
+                switch trailingAccessory {
                 case .disclosureIndicator:
                     trailingIconView.image = UIImage(systemName: "chevron.right")?
                         .withTintColor(.gray.withAlphaComponent(0.25), renderingMode: .alwaysOriginal)
@@ -62,8 +62,10 @@ extension ChidoriMenu {
             }
         }
 
+        var hasAnyIcon: Bool = false
+
         override var accessibilityHint: String? {
-            get { super.accessibilityHint ?? menuTitle }
+            get { super.accessibilityHint ?? title }
             set { super.accessibilityHint = newValue }
         }
 
@@ -149,7 +151,14 @@ extension ChidoriMenu {
             trailingIconView.frame = trailingIconFrame
 
             // Title label - vertically centered with proper multi-line support
-            let titleX = iconView.isHidden ? ChidoriMenu.horizontalPadding : iconFrame.maxX + ChidoriMenu.spacing
+            // Use consistent text alignment when any menu item has an icon
+            let titleX: CGFloat = if hasAnyIcon {
+                // All text aligned after icon space when any item has an icon
+                ChidoriMenu.horizontalPadding + ChidoriMenu.iconSize + ChidoriMenu.spacing
+            } else {
+                // Original behavior when no icons present
+                iconView.isHidden ? ChidoriMenu.horizontalPadding : iconFrame.maxX + ChidoriMenu.spacing
+            }
             let titleWidth = contentBounds.width - titleX - ChidoriMenu.horizontalPadding - (trailingIconView.isHidden ? 0 : ChidoriMenu.iconSize + ChidoriMenu.spacing)
 
             // Calculate label height based on content
