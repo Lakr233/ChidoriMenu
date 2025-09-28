@@ -45,12 +45,7 @@ class ChidoriMenu: UIViewController {
     }
 
     var menuStackScaleFactor: CGFloat = 1.0 {
-        didSet { UIView.animate(
-            withDuration: 0.5,
-            delay: 0,
-            usingSpringWithDamping: 1.0,
-            initialSpringVelocity: 0.8
-        ) { [self] in
+        didSet { Spring.animate { [self] in
             let factor = menuStackScaleFactor
             view.transform = CGAffineTransform(scaleX: factor, y: factor)
             view.layoutIfNeeded()

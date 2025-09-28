@@ -136,9 +136,7 @@ extension ChidoriMenu: UITableViewDelegate, UITableViewDataSource {
         return rowHeight
     }
 
-    func updateMenuSize() {
-        tableView.layoutIfNeeded()
-
+    func updateMenuContainerFrame() {
         let measuredHeight = tableView.contentSize.height.rounded(.up)
         let menuWidth = width
 
@@ -152,13 +150,9 @@ extension ChidoriMenu: UITableViewDelegate, UITableViewDataSource {
         let intrinsicSize = CGSize(width: menuWidth, height: measuredHeight)
         heightOverride = measuredHeight
 
-        guard let controller = presentationController as? ChidoriPresentationController else {
-            assertionFailure()
-            applySize(intrinsicSize)
-            return
-        }
-
-        guard let containerView = controller.containerView else {
+        guard let controller = presentationController as? ChidoriPresentationController,
+              let containerView = controller.containerView
+        else {
             applySize(intrinsicSize)
             return
         }
@@ -175,54 +169,12 @@ extension ChidoriMenu: UITableViewDelegate, UITableViewDataSource {
 
         heightOverride = clampedHeight
 
-        let updateLayout = {
-            let newFrame = controller.frameOfPresentedViewInContainerView
-            self.view.frame = newFrame
-            controller.presentedView?.frame = newFrame
-            self.anchor(to: newFrame)
-            self.view.layoutIfNeeded()
-        }
-
-        if containerView.window != nil, UIView.areAnimationsEnabled {
-            UIView.animate(
-                withDuration: 0.5,
-                delay: 0,
-                usingSpringWithDamping: 1.0,
-                initialSpringVelocity: 0.8
-            ) {
-                updateLayout()
-                containerView.layoutIfNeeded()
-            }
-        } else {
-            updateLayout()
-            containerView.layoutIfNeeded()
-        }
-    }
-
-    func reloadTableView(animated: Bool, completion: (() -> Void)? = nil) {
-        let reloadBlock = {
-            self.tableView.reloadData()
-            self.tableView.layoutIfNeeded()
-        }
-
-        guard animated,
-              UIView.areAnimationsEnabled,
-              tableView.window != nil
-        else {
-            reloadBlock()
-            completion?()
-            return
-        }
-
-        UIView.transition(
-            with: tableView,
-            duration: 0.25,
-            options: [.transitionCrossDissolve, .allowUserInteraction, .beginFromCurrentState]
-        ) {
-            reloadBlock()
-        } completion: { _ in
-            completion?()
-        }
+        let newFrame = controller.frameOfPresentedViewInContainerView
+        view.frame = newFrame
+        controller.presentedView?.frame = newFrame
+        anchor(to: newFrame)
+        view.layoutIfNeeded()
+        containerView.layoutIfNeeded()
     }
 
     func tableView(_: UITableView, heightForHeaderInSection sectionIndex: Int) -> CGFloat {

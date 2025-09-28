@@ -171,7 +171,13 @@ extension ChidoriMenu {
         let titleLabel: UILabel = .init()
 
         init() {
-            super.init(frame: .zero)
+            // give it a default width so it wont animate bad
+            super.init(frame: .init(
+                x: MenuLayout.horizontalPadding,
+                y: MenuLayout.verticalPadding,
+                width: 250,
+                height: 0
+            ))
 
             titleLabel.font = UIFont.preferredFont(forTextStyle: .footnote)
             titleLabel.numberOfLines = 1

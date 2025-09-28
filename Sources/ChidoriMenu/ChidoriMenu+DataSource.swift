@@ -116,10 +116,10 @@ extension ChidoriMenu {
         assert(Thread.isMainThread)
         let contents = flattenedContents(from: menu)
         dataSource = contents
-        let shouldAnimate = tableView.window != nil && UIView.areAnimationsEnabled
-        reloadTableView(animated: shouldAnimate) { [weak self] in
-            self?.updateMenuSize()
-        }
+        tableView.reloadData()
+        tableView.layoutIfNeeded()
+        tableView.visibleCells.forEach { $0.setNeedsLayout() }
+        updateMenuContainerFrame()
     }
 
     func flattenedContents(from menu: UIMenu) -> DataSourceContents {
@@ -256,8 +256,12 @@ extension ChidoriMenu {
             if action.chidoriKeepsMenuPresented {
                 action.execute()
                 view.isUserInteractionEnabled = true
-                reloadTableView(animated: true) { [weak self] in
-                    self?.updateMenuSize()
+                tableView.reloadRows(at: [indexPath], with: .fade)
+                DispatchQueue.main.async { // so fade will work
+                    self.tableView.reloadData()
+                    self.tableView.visibleCells.forEach { $0.setNeedsLayout() }
+                    self.tableView.layoutIfNeeded()
+                    Spring.animate { self.updateMenuContainerFrame() }
                 }
             } else {
                 presentingParent?.dismiss(animated: true) {
