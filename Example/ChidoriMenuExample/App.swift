@@ -439,6 +439,63 @@ struct Content: UIViewControllerRepresentable {
             ])
         })
 
+        let attributesMenu: Menu = .init(title: "UIMenuElement Attributes Test", menu: .init(children: [
+            UIAction(
+                title: "Normal Action",
+                image: UIImage(systemName: "checkmark.circle")
+            ) { _ in
+                SPIndicatorView(title: "Normal Action", preset: .done).present()
+            },
+            UIAction(
+                title: "Disabled Action",
+                image: UIImage(systemName: "xmark.circle"),
+                attributes: .disabled
+            ) { _ in
+                SPIndicatorView(title: "This should not appear", preset: .error).present()
+            },
+            UIAction(
+                title: "Destructive Action",
+                image: UIImage(systemName: "trash"),
+                attributes: .destructive
+            ) { _ in
+                SPIndicatorView(title: "Destructive Action", preset: .error).present()
+            },
+        ]))
+
+        let keepsMenuPresentedMenu: Menu = .init(title: "keepsMenuPresented Test", menu: .init(children: [
+            UIAction(
+                title: "Normal Action (Dismisses)",
+                image: UIImage(systemName: "arrow.down.circle")
+            ) { _ in
+                SPIndicatorView(title: "Menu will dismiss", preset: .done).present()
+            },
+            {
+                if #available(iOS 16.0, macCatalyst 16.0, *) {
+                    UIAction(
+                        title: "Keeps Menu Present",
+                        image: UIImage(systemName: "pin.circle"),
+                        attributes: [.keepsMenuPresented]
+                    ) { _ in
+                        SPIndicatorView(title: "Menu stays open", preset: .done).present()
+                    }
+                } else {
+                    UIAction(
+                        title: "Keeps Menu Present (iOS 16+)",
+                        image: UIImage(systemName: "pin.circle"),
+                        attributes: .disabled
+                    ) { _ in
+                        SPIndicatorView(title: "iOS 16+ only", preset: .error).present()
+                    }
+                }
+            }(),
+            UIAction(
+                title: "Another Normal Action",
+                image: UIImage(systemName: "checkmark.circle")
+            ) { _ in
+                SPIndicatorView(title: "Menu will dismiss", preset: .done).present()
+            },
+        ]))
+
         var menuList: [Menu] { [
             firstMenu,
             secondMenu,
@@ -447,6 +504,8 @@ struct Content: UIViewControllerRepresentable {
             productionTest,
             longTextTest,
             backportMenu,
+            attributesMenu,
+            keepsMenuPresentedMenu,
         ] }
 
         func numberOfSections(in _: UITableView) -> Int {

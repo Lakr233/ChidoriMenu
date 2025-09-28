@@ -32,6 +32,29 @@ extension ChidoriMenu {
     }
 }
 
+// Helper extensions for attribute handling
+extension UIAction {
+    var chidoriIsDisabled: Bool {
+        attributes.contains(.disabled)
+    }
+
+    var chidoriKeepsMenuPresented: Bool {
+        if #available(iOS 16.0, macCatalyst 16.0, *) {
+            attributes.contains(.keepsMenuPresented)
+        } else {
+            false
+        }
+    }
+}
+
+extension UIMenu {
+    var chidoriIsDisabled: Bool {
+        // UIMenu.Options doesn't have .disabled, so we need to check individual menu elements
+        // For submenus, we'll check if all children are disabled or if the menu itself has disabled state
+        false // Submenus don't have a direct disabled attribute in UIMenu.Options
+    }
+}
+
 extension ChidoriMenu.MenuContent {
     var description: String {
         switch content {
@@ -152,14 +175,29 @@ extension ChidoriMenu {
     }
 
     func executeAction(_ indexPath: IndexPath) {
+        guard let action = item(forIndexPath: indexPath) else { return }
+        guard let cell = tableView.cellForRow(at: indexPath) else { return }
+
+        // Check if action is disabled
+        switch action.content {
+        case let .action(action):
+            if action.chidoriIsDisabled {
+                return
+            }
+        case let .submenu(menu):
+            if menu.chidoriIsDisabled {
+                return
+            }
+        }
+
         if let haptic = ChidoriMenuConfiguration.hapticFeedback {
             UIImpactFeedbackGenerator(style: haptic).impactOccurred()
         }
-        guard let action = item(forIndexPath: indexPath) else { return }
-        guard let cell = tableView.cellForRow(at: indexPath) else { return }
+
         for indexPath in tableView.indexPathsForSelectedRows ?? [] {
             tableView.deselectRow(at: indexPath, animated: true)
         }
+
         let content = action.content
         switch content {
         case let .action(action):
@@ -168,14 +206,21 @@ extension ChidoriMenu {
                 return
             }
             view.isUserInteractionEnabled = false
-            presentingParent?.dismiss(animated: true) {
+
+            // Check if we should keep menu presented
+            if action.chidoriKeepsMenuPresented {
                 action.execute()
-            }
-            #if DEBUG
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
-                    assert(self == nil)
+                view.isUserInteractionEnabled = true
+            } else {
+                presentingParent?.dismiss(animated: true) {
+                    action.execute()
                 }
-            #endif
+                #if DEBUG
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+                        assert(self == nil)
+                    }
+                #endif
+            }
         case let .submenu(menu):
             cell.present(menu: menu, anchorPoint: .init(
                 x: cell.bounds.midX,

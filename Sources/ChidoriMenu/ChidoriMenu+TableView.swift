@@ -45,6 +45,7 @@ extension ChidoriMenu: UITableViewDelegate, UITableViewDataSource {
             cell.menuTitle = action.title
             cell.iconImage = action.image
             cell.isDestructive = action.attributes.contains(.destructive)
+            cell.isDisabled = action.chidoriIsDisabled
             switch action.state {
             case .on: cell.trailingItem = .checkmark
             case .mixed: cell.trailingItem = .detailButton
@@ -55,6 +56,7 @@ extension ChidoriMenu: UITableViewDelegate, UITableViewDataSource {
             cell.menuTitle = menu.title
             cell.iconImage = menu.image
             cell.isDestructive = menu.options.contains(.destructive)
+            cell.isDisabled = menu.chidoriIsDisabled
             cell.trailingItem = .disclosureIndicator
             cell.trailingIconView.tintColor = .label
         }
@@ -78,7 +80,23 @@ extension ChidoriMenu: UITableViewDelegate, UITableViewDataSource {
         return ChidoriMenu.dimmingSectionSepratorHeight
     }
 
-    func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let action = item(forIndexPath: indexPath) else { return }
+
+        // Check if action is disabled
+        switch action.content {
+        case let .action(action):
+            if action.chidoriIsDisabled {
+                tableView.deselectRow(at: indexPath, animated: true)
+                return
+            }
+        case let .submenu(menu):
+            if menu.chidoriIsDisabled {
+                tableView.deselectRow(at: indexPath, animated: true)
+                return
+            }
+        }
+
         executeAction(indexPath)
     }
 

@@ -28,7 +28,7 @@ class ChidoriMenu: UIViewController {
         ).height.rounded(.up)
     }
 
-    private var anchorViewToFrame: CGRect? = nil
+    private var anchorViewToFrame: CGRect?
 
     var presentingParent: UIViewController? {
         var parent: UIViewController? = presentingViewController
@@ -70,9 +70,9 @@ class ChidoriMenu: UIViewController {
     }
 
     @available(*, unavailable)
-    public required init?(coder _: NSCoder) { fatalError() }
+    required init?(coder _: NSCoder) { fatalError() }
 
-    override public func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
 
         view.backgroundColor = .clear

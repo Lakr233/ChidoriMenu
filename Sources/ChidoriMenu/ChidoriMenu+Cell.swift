@@ -24,6 +24,15 @@ extension ChidoriMenu {
             }
         }
 
+        var isDisabled: Bool = false {
+            didSet {
+                let alpha: CGFloat = isDisabled ? 0.3 : 1.0
+                titleLabel.alpha = alpha
+                iconView.alpha = alpha
+                trailingIconView.alpha = alpha
+            }
+        }
+
         var iconImage: UIImage? {
             didSet {
                 iconView.image = iconImage
