@@ -108,41 +108,61 @@ extension ChidoriMenu: UITableViewDelegate, UITableViewDataSource {
             return UITableView.automaticDimension
         }
 
-        // Use a temporary cell to calculate the exact height
-        let cell = Cell(style: .default, reuseIdentifier: nil)
+        let menuWidth = width
 
-        // Configure the cell with current data
-        cell.sectionHasAnyIcon = section.hasAnyIcon
-        switch item.content {
-        case let .action(action):
-            cell.title = action.title
-            cell.icon = action.image
-            cell.isDestructive = action.attributes.contains(.destructive)
-            cell.isDisabled = action.chidoriIsDisabled
-            switch action.state {
-            case .on: cell.trailingAccessory = .checkmark
-            case .mixed: cell.trailingAccessory = .detailButton
-            default: cell.trailingAccessory = .none
-            }
-            cell.trailingIconView.tintColor = .label
-        case let .submenu(menu):
-            cell.title = menu.title
-            cell.icon = menu.image
-            cell.isDestructive = menu.options.contains(.destructive)
-            cell.isDisabled = menu.chidoriIsDisabled
-            cell.trailingAccessory = .disclosureIndicator
-            cell.trailingIconView.tintColor = .label
+        // Calculate available text width matching the cell layout logic
+        let titleX: CGFloat = if section.hasAnyIcon {
+            // All text aligned after icon space when any item in section has an icon
+            MenuLayout.horizontalPadding + MenuLayout.iconSize + MenuLayout.spacing
+        } else {
+            // When no icons in section, align text to left edge
+            MenuLayout.horizontalPadding
         }
 
-        // Calculate the cell height using the actual layout
-        let targetSize = CGSize(width: width, height: UIView.layoutFittingCompressedSize.height)
-        let height = cell.systemLayoutSizeFitting(
-            targetSize,
-            withHorizontalFittingPriority: .required,
-            verticalFittingPriority: .fittingSizeLevel
+        // Calculate trailing icon space
+        let trailingIconSpace: CGFloat = switch item.content {
+        case let .action(action):
+            // Check if trailing icon will be visible
+            (action.state != .off)
+                ? MenuLayout.iconSize
+                + MenuLayout.spacing : 0
+        case .submenu:
+            // Submenus always have trailing disclosure indicator
+            MenuLayout.iconSize + MenuLayout.spacing
+        }
+
+        let availableTextWidth = menuWidth - titleX - MenuLayout.horizontalPadding - trailingIconSpace
+
+        // Calculate text height
+        let font = UIFont.preferredFont(forTextStyle: .body)
+        let textHeight = (item.title as NSString).boundingRect(
+            with: CGSize(width: availableTextWidth, height: .greatestFiniteMagnitude),
+            options: [.usesLineFragmentOrigin, .usesFontLeading],
+            attributes: [.font: font],
+            context: nil
         ).height
 
-        return max(height, ChidoriMenu.minRowHeight)
+        let rowHeight = max(textHeight + ChidoriMenu.verticalPadding * 2, ChidoriMenu.minRowHeight)
+        return rowHeight
+    }
+
+    func updateMenuSize() {
+        // Force table view to recalculate its content size
+        tableView.layoutIfNeeded()
+
+        // Update the view controller's preferred content size with animation
+        UIView.animate(
+            withDuration: 0.3,
+            delay: 0,
+            usingSpringWithDamping: 0.8,
+            initialSpringVelocity: 1.0
+        ) {
+            self.preferredContentSize = CGSize(width: self.width, height: self.height)
+
+            // Notify presentation controller to update frame
+            self.presentationController?.containerView?.setNeedsLayout()
+            self.presentationController?.containerView?.layoutIfNeeded()
+        }
     }
 
     func tableView(_: UITableView, heightForHeaderInSection sectionIndex: Int) -> CGFloat {

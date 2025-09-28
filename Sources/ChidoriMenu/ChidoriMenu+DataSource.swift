@@ -260,6 +260,8 @@ extension ChidoriMenu {
                 view.isUserInteractionEnabled = true
                 // Reload table view to reflect any state changes
                 tableView.reloadData()
+                // Update menu size after reload
+                updateMenuSize()
             } else {
                 presentingParent?.dismiss(animated: true) {
                     action.execute()
