@@ -41,6 +41,8 @@ struct Content: UIViewControllerRepresentable {
 
             ChidoriMenuConfiguration.accentColor = .systemPink
             ChidoriMenuConfiguration.backgroundColor = .systemBackground
+            ChidoriMenuConfiguration.prefersLiquidGlass = true
+            ChidoriMenuConfiguration.glassTintColor = nil // Use default tint
         }
 
         override func viewWillLayoutSubviews() {
@@ -84,6 +86,13 @@ struct Content: UIViewControllerRepresentable {
                 ChidoriMenuConfiguration.suggestedWidth = 350
             } else {
                 ChidoriMenuConfiguration.suggestedWidth = nil
+            }
+
+            // Configure liquid glass tint for the liquid glass menu
+            if menuDefinition.title == "Liquid Glass Menu" {
+                ChidoriMenuConfiguration.glassTintColor = .systemBlue.withAlphaComponent(0.5)
+            } else {
+                ChidoriMenuConfiguration.glassTintColor = nil
             }
 
             anchorView.present(menu: menuDefinition.menu)

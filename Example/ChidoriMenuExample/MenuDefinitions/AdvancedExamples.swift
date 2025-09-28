@@ -87,10 +87,30 @@ enum AdvancedExamples {
         )
     )
 
+    // MARK: - Liquid Glass Examples
+
+    static let liquidGlassMenu: MenuDefinition = .init(
+        title: "Liquid Glass Menu",
+        menu: .init(children: [
+            UIAction(title: "Glass Action 1", image: UIImage(systemName: "drop")) { _ in
+                showIndicator("Glass 1")
+            },
+            UIAction(title: "Glass Action 2", image: UIImage(systemName: "drop.fill")) { _ in
+                showIndicator("Glass 2")
+            },
+            UIMenu(title: "Glass Submenu", children: [
+                UIAction(title: "Sub Action", image: UIImage(systemName: "circle")) { _ in
+                    showIndicator("Sub Glass")
+                },
+            ]),
+        ])
+    )
+
     static let allExamples: [MenuDefinition] = [
         deferredMenu,
         layoutMenu,
         productionMenu,
+        liquidGlassMenu,
     ]
 }
 
