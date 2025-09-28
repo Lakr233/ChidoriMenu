@@ -9,34 +9,34 @@ import ChidoriMenu
 import SPIndicator
 import UIKit
 
-enum ProductionExamplesTests {
+enum ProductionExamples {
     static let productionMenu: MenuDefinition = .init(
         title: "Production Style Test",
         menu: UIMenu(
-            title: NSLocalizedString("Select Model Type", comment: ""),
+            title: "Select Model Type",
             options: [.displayInline],
             children: [
                 UIMenu(
-                    title: NSLocalizedString("Local Model", comment: ""),
+                    title: "Local Model",
                     options: [.displayInline, .singleSelection],
                     children: [
-                        UIAction(title: NSLocalizedString("Hugging Face", comment: "")) { _ in
+                        UIAction(title: "Hugging Face") { _ in
                             showIndicator("Hugging Face")
                         },
-                        UIAction(title: NSLocalizedString("Model Scope", comment: "")) { _ in
+                        UIAction(title: "Model Scope") { _ in
                             showIndicator("Model Scope")
                         },
                     ]
                 ),
                 UIMenu(
-                    title: NSLocalizedString("Cloud Model", comment: ""),
+                    title: "Cloud Model",
                     options: [.displayInline, .singleSelection],
                     children: [
-                        UIAction(title: NSLocalizedString("OpenAI API Compatible", comment: ""), state: .on) { _ in
+                        UIAction(title: "OpenAI API Compatible", state: .on) { _ in
                             showIndicator("OpenAI API")
                         },
                         UIMenu(
-                            title: NSLocalizedString("Service Providers", comment: ""),
+                            title: "Service Providers",
                             options: [.singleSelection],
                             children: [
                                 UIAction(title: "OpenAI") { _ in

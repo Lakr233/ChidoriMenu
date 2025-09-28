@@ -1,5 +1,5 @@
 //
-//  AttributeTests.swift
+//  CoreFunctionalityTests.swift
 //  ChidoriMenuExample
 //
 //  Created by 秋星桥 on 1/19/25.
@@ -9,9 +9,87 @@ import ChidoriMenu
 import SPIndicator
 import UIKit
 
-enum AttributeTests {
+enum CoreFunctionalityTests {
+    // MARK: - Basic Menu Tests
+
+    static let basicMenu: MenuDefinition = .init(
+        title: "Basic Menu",
+        menu: .init(children: [
+            UIAction(
+                title: "Copy",
+                image: UIImage(systemName: "doc.on.doc"),
+                state: .on
+            ) { _ in
+                showIndicator("Copied")
+            },
+            UIAction(
+                title: "Paste",
+                image: UIImage(systemName: "doc.on.doc"),
+                attributes: .disabled,
+                state: .off
+            ) { _ in
+                showIndicator("Pasted")
+            },
+            UIAction(
+                title: "Delete",
+                image: UIImage(systemName: "trash"),
+                attributes: .destructive,
+                state: .mixed
+            ) { _ in
+                showIndicator("Deleted")
+            },
+        ])
+    )
+
+    static let stateManagementMenu: MenuDefinition = .init(
+        title: "State Management",
+        menu: .init(children: [
+            UIAction(
+                title: "Option A",
+                image: UIImage(systemName: "a.circle"),
+                state: .on
+            ) { _ in
+                showIndicator("Option A selected")
+            },
+            UIAction(
+                title: "Option B",
+                image: UIImage(systemName: "b.circle"),
+                state: .off
+            ) { _ in
+                showIndicator("Option B selected")
+            },
+            UIAction(
+                title: "Option C",
+                image: UIImage(systemName: "c.circle"),
+                state: .mixed
+            ) { _ in
+                showIndicator("Option C selected")
+            },
+            UIMenu(
+                title: "Advanced Options",
+                options: [.displayInline],
+                children: [
+                    UIAction(
+                        title: "Sub Option 1",
+                        state: .on
+                    ) { _ in
+                        showIndicator("Sub Option 1")
+                    },
+                    UIAction(
+                        title: "Sub Option 2",
+                        state: .off
+                    ) { _ in
+                        showIndicator("Sub Option 2")
+                    },
+                ]
+            ),
+        ])
+    )
+
+    // MARK: - Attribute Tests
+
     static let attributesMenu: MenuDefinition = .init(
-        title: "UIMenuElement Attributes Test",
+        title: "Menu Attributes",
         menu: .init(children: [
             UIAction(
                 title: "Normal Action",
@@ -37,7 +115,7 @@ enum AttributeTests {
     )
 
     static let keepsMenuPresentedMenu: MenuDefinition = .init(
-        title: "keepsMenuPresented Test",
+        title: "Keeps Menu Presented",
         menu: .init(children: [
             UIAction(
                 title: "Normal Action (Dismisses)",
@@ -75,7 +153,7 @@ enum AttributeTests {
     )
 
     static let combinedAttributesMenu: MenuDefinition = .init(
-        title: "Combined Attributes Test",
+        title: "Combined Attributes",
         menu: .init(children: [
             UIAction(
                 title: "Normal Action",
@@ -113,6 +191,8 @@ enum AttributeTests {
     )
 
     static let allTests: [MenuDefinition] = [
+        basicMenu,
+        stateManagementMenu,
         attributesMenu,
         keepsMenuPresentedMenu,
         combinedAttributesMenu,
