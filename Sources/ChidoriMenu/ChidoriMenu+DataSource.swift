@@ -78,6 +78,31 @@ extension ChidoriMenu.MenuContent {
 extension ChidoriMenu {
     typealias DataSourceContents = [(section: MenuSection, contents: [MenuContent])]
 
+    private func debugAssertMenuDeallocated() {
+        #if DEBUG
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+                assert(self == nil)
+            }
+        #endif
+    }
+
+    private class MenuFlatteningContext {
+        var result: [(MenuSection, [MenuContent])] = []
+        var sectionTitle: String
+        var sectionBuilder: [MenuContent] = []
+        init(initialTitle: String = "") {
+            sectionTitle = initialTitle
+        }
+
+        func commitCurrentSection() {
+            guard !sectionBuilder.isEmpty else { return }
+            let section = MenuSection(title: sectionTitle)
+            result.append((section, sectionBuilder))
+            sectionTitle = ""
+            sectionBuilder = []
+        }
+    }
+
     func updateDataSource() {
         assert(Thread.isMainThread)
         let contents = flattenedContents(from: menu)
@@ -112,58 +137,30 @@ extension ChidoriMenu {
     }
 
     func flattenedContents(initialTitle: String = "", menuChildren: [UIMenuElement]) -> DataSourceContents {
-        var result: [(MenuSection, [MenuContent])] = []
-
-        var sectionTitle: String = initialTitle
-        var sectionBuilder: [MenuContent] = []
-        var shouldSubmitSection = false
-
-        func commitCurrentSection() {
-            guard !sectionBuilder.isEmpty else { return }
-            let section = MenuSection(title: sectionTitle)
-            result.append((section, sectionBuilder))
-            sectionTitle = ""
-            sectionBuilder = []
-        }
+        let context = MenuFlatteningContext(initialTitle: initialTitle)
 
         for element in menuChildren {
-            if processUIAction(
-                element,
-                sectionBuilder: &sectionBuilder
-            ) { continue }
-            if processUIMenu(
-                element,
-                sectionBuilder: &sectionBuilder,
-                result: &result,
-                commitSection: { shouldSubmitSection = true }
-            ) { continue }
-            if processUIDeferredMenuElement(
-                element,
-                commitSection: { shouldSubmitSection = true },
-                result: &result
-            ) { continue }
+            if processUIAction(element, context: context) { continue }
+            if processUIMenu(element, context: context) { continue }
+            if processUIDeferredMenuElement(element, context: context) { continue }
             assertionFailure()
         }
 
-        if shouldSubmitSection {
-            commitCurrentSection()
+        if !context.sectionBuilder.isEmpty {
+            // Commit any remaining items in the section builder
+            context.commitCurrentSection()
         }
 
-        return result
+        return context.result
     }
 
-    private func processUIAction(_ element: UIMenuElement, sectionBuilder: inout [MenuContent]) -> Bool {
+    private func processUIAction(_ element: UIMenuElement, context: MenuFlatteningContext) -> Bool {
         guard let action = element as? UIAction else { return false }
-        sectionBuilder.append(.init(content: .action(action)))
+        context.sectionBuilder.append(.init(content: .action(action)))
         return true
     }
 
-    private func processUIMenu(
-        _ element: UIMenuElement,
-        sectionBuilder: inout [MenuContent],
-        result: inout [(MenuSection, [MenuContent])],
-        commitSection: () -> Void
-    ) -> Bool {
+    private func processUIMenu(_ element: UIMenuElement, context: MenuFlatteningContext) -> Bool {
         var childMenu: UIMenu?
         if let castMenu = element as? DeferredMenu {
             childMenu = castMenu.menuProvider()
@@ -173,44 +170,35 @@ extension ChidoriMenu {
         guard let childMenu else { return false }
 
         if childMenu.options.contains(.displayInline) {
-            processInlineMenu(childMenu, sectionBuilder: &sectionBuilder, result: &result, commitSection: commitSection)
+            processInlineMenu(childMenu, context: context)
         } else {
-            sectionBuilder.append(.init(content: .submenu(childMenu)))
+            context.sectionBuilder.append(.init(content: .submenu(childMenu)))
         }
         return true
     }
 
-    private func processInlineMenu(
-        _ menu: UIMenu,
-        sectionBuilder: inout [MenuContent],
-        result: inout [(MenuSection, [MenuContent])],
-        commitSection: () -> Void
-    ) {
+    private func processInlineMenu(_ menu: UIMenu, context: MenuFlatteningContext) {
         let title = menu.title
         if title.isEmpty {
             var firstSectionAppended = false
             for (section, items) in flattenedContents(from: menu) {
                 if firstSectionAppended {
-                    result.append((section, items))
+                    context.result.append((section, items))
                 } else {
-                    sectionBuilder.append(contentsOf: items)
+                    context.sectionBuilder.append(contentsOf: items)
                     firstSectionAppended = true
-                    commitSection()
+                    context.commitCurrentSection()
                 }
             }
         } else {
-            commitSection()
+            context.commitCurrentSection()
             for (section, items) in flattenedContents(from: menu) {
-                result.append((section, items))
+                context.result.append((section, items))
             }
         }
     }
 
-    private func processUIDeferredMenuElement(
-        _ element: UIMenuElement,
-        commitSection: () -> Void,
-        result: inout [(MenuSection, [MenuContent])]
-    ) -> Bool {
+    private func processUIDeferredMenuElement(_ element: UIMenuElement, context: MenuFlatteningContext) -> Bool {
         guard #available(iOS 14.0, macCatalyst 14.0, *) else { return false }
         guard let deferred = element as? UIDeferredMenuElement else { return false }
 
@@ -233,9 +221,9 @@ extension ChidoriMenu {
         assert(menuItemsWasSet, "ChidoriMenu does not support async deferred menu elements")
         guard !menuItems.isEmpty else { return true }
 
-        commitSection()
+        context.commitCurrentSection()
         for (section, items) in flattenedContents(menuChildren: menuItems) {
-            result.append((section, items))
+            context.result.append((section, items))
         }
         return true
     }
@@ -283,11 +271,7 @@ extension ChidoriMenu {
                 presentingParent?.dismiss(animated: true) {
                     action.execute()
                 }
-                #if DEBUG
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
-                        assert(self == nil)
-                    }
-                #endif
+                debugAssertMenuDeallocated()
             }
         case let .submenu(menu):
             cell.present(menu: menu, anchorPoint: .init(
