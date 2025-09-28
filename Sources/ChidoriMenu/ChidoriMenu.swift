@@ -63,7 +63,7 @@ class ChidoriMenu: UIViewController {
 
         tableView.register(Cell.self, forCellReuseIdentifier: String(describing: Cell.self))
         tableView.rowHeight = UITableView.automaticDimension
-        tableView.estimatedRowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = 44
 
         super.init(nibName: nil, bundle: nil)
 
@@ -236,9 +236,6 @@ class ChidoriMenu: UIViewController {
         }
 
         // Calculate width based on content
-        let horizontalPadding: CGFloat = 16
-        let iconSize: CGFloat = 22
-        let spacing: CGFloat = 12
         let minWidth: CGFloat = 200
         let maxWidth: CGFloat = 320
 
@@ -250,31 +247,31 @@ class ChidoriMenu: UIViewController {
                 switch content.content {
                 case let .action(action):
                     let textWidth = calculateTextWidth(for: action.title)
-                    var itemWidth = horizontalPadding * 2 + textWidth
+                    var itemWidth = ChidoriMenu.horizontalPadding * 2 + textWidth
 
                     // Add icon space if present
                     if action.image != nil {
-                        itemWidth += iconSize + spacing
+                        itemWidth += ChidoriMenu.iconSize + ChidoriMenu.spacing
                     }
 
                     // Add trailing icon space if present
                     if action.chidoriKeepsMenuPresented || action.state != .off {
-                        itemWidth += iconSize + spacing
+                        itemWidth += ChidoriMenu.iconSize + ChidoriMenu.spacing
                     }
 
                     maxContentWidth = max(maxContentWidth, itemWidth)
 
                 case let .submenu(menu):
                     let textWidth = calculateTextWidth(for: menu.title)
-                    var itemWidth = horizontalPadding * 2 + textWidth
+                    var itemWidth = ChidoriMenu.horizontalPadding * 2 + textWidth
 
                     // Add icon space if present
                     if menu.image != nil {
-                        itemWidth += iconSize + spacing
+                        itemWidth += ChidoriMenu.iconSize + ChidoriMenu.spacing
                     }
 
                     // Always add trailing icon for submenus
-                    itemWidth += iconSize + spacing
+                    itemWidth += ChidoriMenu.iconSize + ChidoriMenu.spacing
 
                     maxContentWidth = max(maxContentWidth, itemWidth)
                 }

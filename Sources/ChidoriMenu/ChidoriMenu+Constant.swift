@@ -19,6 +19,13 @@ extension ChidoriMenu {
     static let dimmingSectionSepratorHeight: CGFloat = 4
 
     static let stackScaleFactor: CGFloat = 0.05
+
+    // Layout constants
+    static let horizontalPadding: CGFloat = 16
+    static let verticalPadding: CGFloat = 11
+    static let iconSize: CGFloat = 22
+    static let spacing: CGFloat = 12
+    static let minRowHeight: CGFloat = 44
 }
 
 extension ChidoriMenu.Cell {

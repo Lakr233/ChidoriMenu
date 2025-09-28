@@ -100,6 +100,47 @@ extension ChidoriMenu: UITableViewDelegate, UITableViewDataSource {
         executeAction(indexPath)
     }
 
+    func tableView(_: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        guard let item = item(forIndexPath: indexPath) else {
+            return UITableView.automaticDimension
+        }
+
+        let menuWidth = width
+        var availableTextWidth = menuWidth - ChidoriMenu.horizontalPadding * 2
+
+        switch item.content {
+        case let .action(action):
+            // Subtract icon space if present
+            if action.image != nil {
+                availableTextWidth -= ChidoriMenu.iconSize + ChidoriMenu.spacing
+            }
+            // Subtract trailing icon space if present
+            if action.chidoriKeepsMenuPresented || action.state != .off {
+                availableTextWidth -= ChidoriMenu.iconSize + ChidoriMenu.spacing
+            }
+
+        case let .submenu(menu):
+            // Subtract icon space if present
+            if menu.image != nil {
+                availableTextWidth -= ChidoriMenu.iconSize + ChidoriMenu.spacing
+            }
+            // Always subtract trailing icon for submenus
+            availableTextWidth -= ChidoriMenu.iconSize + ChidoriMenu.spacing
+        }
+
+        // Calculate text height
+        let font = UIFont.preferredFont(forTextStyle: .body)
+        let textHeight = (item.title as NSString).boundingRect(
+            with: CGSize(width: availableTextWidth, height: .greatestFiniteMagnitude),
+            options: [.usesLineFragmentOrigin, .usesFontLeading],
+            attributes: [.font: font],
+            context: nil
+        ).height
+
+        let rowHeight = max(textHeight + ChidoriMenu.verticalPadding * 2, ChidoriMenu.minRowHeight)
+        return rowHeight
+    }
+
     func tableView(_: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         guard let section = sectionContents(for: section) else {
             return 0

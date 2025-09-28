@@ -22,6 +22,15 @@ extension ChidoriMenu {
             case submenu(UIMenu)
         }
 
+        var title: String {
+            switch content {
+            case let .action(action):
+                return action.title
+            case let .submenu(menu):
+                return menu.title
+            }
+        }
+
         func hash(into hasher: inout Hasher) {
             hasher.combine(id)
         }
