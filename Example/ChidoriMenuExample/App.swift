@@ -516,6 +516,66 @@ struct Content: UIViewControllerRepresentable {
             },
         ]))
 
+        let iconAlignmentMenu: Menu = .init(title: "Icon Alignment Test", menu: .init(children: [
+            UIAction(
+                title: "Single line with icon",
+                image: UIImage(systemName: "star.fill")
+            ) { _ in
+                SPIndicatorView(title: "Single line icon", preset: .done).present()
+            },
+            UIAction(
+                title: "Multi-line text with icon that spans multiple lines to test vertical centering",
+                image: UIImage(systemName: "heart.fill")
+            ) { _ in
+                SPIndicatorView(title: "Multi-line icon", preset: .done).present()
+            },
+            UIAction(
+                title: "Short",
+                image: UIImage(systemName: "circle.fill")
+            ) { _ in
+                SPIndicatorView(title: "Short icon", preset: .done).present()
+            },
+        ]))
+
+        let multiLineTextMenu: Menu = .init(title: "Multi-line Text Test", menu: .init(children: [
+            UIAction(title: "Single line text") { _ in
+                SPIndicatorView(title: "Single line", preset: .done).present()
+            },
+            UIAction(title: "Two line text that wraps to the next line for proper testing") { _ in
+                SPIndicatorView(title: "Two lines", preset: .done).present()
+            },
+            UIAction(title: "Very long text that should wrap across multiple lines to test the layout and vertical centering properly") { _ in
+                SPIndicatorView(title: "Multi-line", preset: .done).present()
+            },
+            UIAction(
+                title: "Multi-line with icon that should be vertically centered",
+                image: UIImage(systemName: "text.alignleft")
+            ) { _ in
+                SPIndicatorView(title: "Multi-line icon", preset: .done).present()
+            },
+        ]))
+
+        let responsiveWidthMenu: Menu = .init(title: "Responsive Width Test", menu: .init(children: [
+            UIAction(title: "Normal width item") { _ in
+                SPIndicatorView(title: "Normal", preset: .done).present()
+            },
+            UIAction(title: "Very long item that tests the min(max(width) + 32, available - 64) formula") { _ in
+                SPIndicatorView(title: "Long formula test", preset: .done).present()
+            },
+            UIAction(
+                title: "Item with icon and long text",
+                image: UIImage(systemName: "arrow.right")
+            ) { _ in
+                SPIndicatorView(title: "Icon + long", preset: .done).present()
+            },
+            UIAction(
+                title: "Short",
+                image: UIImage(systemName: "checkmark")
+            ) { _ in
+                SPIndicatorView(title: "Short icon", preset: .done).present()
+            },
+        ]))
+
         let customWidthMenu: Menu = .init(title: "Custom Width Test", menu: .init(children: [
             UIAction(title: "This menu uses custom width") { _ in
                 SPIndicatorView(title: "Custom width", preset: .done).present()
@@ -536,6 +596,9 @@ struct Content: UIViewControllerRepresentable {
             attributesMenu,
             keepsMenuPresentedMenu,
             dynamicWidthMenu,
+            iconAlignmentMenu,
+            multiLineTextMenu,
+            responsiveWidthMenu,
             customWidthMenu,
         ] }
 

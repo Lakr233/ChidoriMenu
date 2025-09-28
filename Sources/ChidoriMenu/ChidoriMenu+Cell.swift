@@ -134,33 +134,41 @@ extension ChidoriMenu {
                 height: 0.5
             )
 
-            // Icon
+            // Calculate vertical center position for icons and label
+            let contentHeight = contentBounds.height - verticalPadding * 2
+            let centerY = verticalPadding + contentHeight / 2
+
+            // Icon - vertically centered
             let iconFrame = CGRect(
                 x: horizontalPadding,
-                y: verticalPadding,
+                y: centerY - iconSize / 2,
                 width: iconSize,
                 height: iconSize
             )
             iconView.frame = iconFrame
 
-            // Trailing icon
+            // Trailing icon - vertically centered
             let trailingIconFrame = CGRect(
                 x: contentBounds.width - horizontalPadding - iconSize,
-                y: verticalPadding,
+                y: centerY - iconSize / 2,
                 width: iconSize,
                 height: iconSize
             )
             trailingIconView.frame = trailingIconFrame
 
-            // Title label
+            // Title label - vertically centered with proper height
             let titleX = iconView.isHidden ? horizontalPadding : iconFrame.maxX + spacing
             let titleWidth = contentBounds.width - titleX - horizontalPadding - (trailingIconView.isHidden ? 0 : iconSize + spacing)
 
+            // Calculate label height based on content
+            let labelHeight = titleLabel.sizeThatFits(CGSize(width: titleWidth, height: .greatestFiniteMagnitude)).height
+            let labelY = centerY - labelHeight / 2
+
             titleLabel.frame = CGRect(
                 x: titleX,
-                y: verticalPadding,
+                y: labelY,
                 width: titleWidth,
-                height: contentBounds.height - verticalPadding * 2
+                height: min(labelHeight, contentHeight)
             )
         }
     }

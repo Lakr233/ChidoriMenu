@@ -281,7 +281,15 @@ class ChidoriMenu: UIViewController {
             }
         }
 
-        return min(max(maxContentWidth, minWidth), maxWidth)
+        // Calculate available screen width
+        let screenWidth = UIScreen.main.bounds.width
+        let availableWidth = screenWidth - 64 // 32 padding on each side
+
+        // Use new formula: min(max(menu item width) + 32, available width - 64)
+        let calculatedWidth = maxContentWidth + 32
+        let finalWidth = min(calculatedWidth, availableWidth)
+
+        return min(max(finalWidth, minWidth), maxWidth)
     }
 
     private func calculateTextWidth(for text: String) -> CGFloat {

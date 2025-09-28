@@ -61,6 +61,12 @@ swift package generate-xcodeproj
 - Uses helper properties (`chidoriIsDisabled`, `chidoriKeepsMenuPresented`) for safe attribute access
 - Proper iOS version checking for newer attributes
 
+### Layout and Styling
+- **Icon Alignment**: Icons are vertically centered within menu items
+- **Multi-line Labels**: Supports multi-line text with proper vertical centering
+- **Dynamic Width**: Uses `min(max(menu item width) + 32, available width - 64)` formula for optimal sizing
+- **Responsive Design**: Adapts to screen size with appropriate padding
+
 ### Runtime Compatibility
 - Uses Objective-C runtime to handle iOS 26+ API changes in `UIDeferredMenuElement`
 - Dynamically adds missing `elementProvider` property when needed
@@ -71,6 +77,7 @@ swift package generate-xcodeproj
   - `accentColor`: Menu highlight color
   - `backgroundColor`: Menu background color
   - `hapticFeedback`: Optional haptic feedback style
+  - `suggestedWidth`: Optional custom width override
 
 ## Testing
 
