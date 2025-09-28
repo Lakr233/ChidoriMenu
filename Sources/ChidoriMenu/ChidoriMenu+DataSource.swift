@@ -59,8 +59,6 @@ extension UIAction {
 
 extension UIMenu {
     var chidoriIsDisabled: Bool {
-        // UIMenu.Options doesn't have .disabled, so we need to check individual menu elements
-        // For submenus, we'll check if all children are disabled or if the menu itself has disabled state
         false // Submenus don't have a direct disabled attribute in UIMenu.Options
     }
 }
@@ -98,7 +96,6 @@ extension ChidoriMenu {
         func commitCurrentSection() {
             guard !sectionBuilder.isEmpty else { return }
 
-            // Calculate if this section has any icons
             let sectionHasAnyIcon = sectionBuilder.contains { content in
                 switch content.content {
                 case let .action(action):
@@ -221,11 +218,10 @@ extension ChidoriMenu {
         return true
     }
 
-    func executeAction(_ indexPath: IndexPath) {
+    func executeAction(_ indexPath: IndexPath, touchLocation: CGPoint? = nil) {
         guard let action = item(at: indexPath) else { return }
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
 
-        // Check if action is disabled
         switch action.content {
         case let .action(action):
             if action.chidoriIsDisabled {
@@ -254,7 +250,6 @@ extension ChidoriMenu {
             }
             view.isUserInteractionEnabled = false
 
-            // Check if we should keep menu presented
             if action.chidoriKeepsMenuPresented {
                 action.execute()
                 view.isUserInteractionEnabled = true
@@ -269,10 +264,17 @@ extension ChidoriMenu {
                 debugAssertMenuDeallocated()
             }
         case let .submenu(menu):
-            cell.present(menu: menu, anchorPoint: .init(
-                x: cell.bounds.midX,
-                y: cell.bounds.minY - MenuLayout.offsetY
-            ))
+            let anchorPoint: CGPoint = if let touchLocation {
+                // Convert touch location to cell's coordinate system
+                cell.convert(touchLocation, from: tableView)
+            } else {
+                // Fallback to center of cell
+                CGPoint(
+                    x: cell.bounds.midX,
+                    y: cell.bounds.minY - MenuLayout.offsetY
+                )
+            }
+            cell.present(menu: menu, anchorPoint: anchorPoint)
             forEachMenuInStack {
                 $0.menuStackScaleFactor -= MenuLayout.stackScaleFactor
             }

@@ -23,8 +23,10 @@ class ChidoriMenu: UIViewController {
         calculateMenuWidth()
     }
 
+    var heightOverride: CGFloat?
+
     var height: CGFloat {
-        tableView.sizeThatFits(
+        heightOverride ?? tableView.sizeThatFits(
             CGSize(
                 width: width,
                 height: CGFloat.greatestFiniteMagnitude
@@ -176,6 +178,13 @@ class ChidoriMenu: UIViewController {
         super.pressesBegan(presses, with: event)
     }
 
+    override var preferredContentSize: CGSize {
+        get {
+            CGSize(width: width, height: height)
+        }
+        set { assertionFailure() }
+    }
+
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
@@ -230,18 +239,15 @@ class ChidoriMenu: UIViewController {
     }
 
     private func calculateMenuWidth() -> CGFloat {
-        // Use suggested width if provided
         if let suggestedWidth = ChidoriMenuConfiguration.suggestedWidth {
             return suggestedWidth
         }
 
-        // Calculate width based on content
         let minWidth: CGFloat = 200
         let maxWidth: CGFloat = 320
 
         var maxContentWidth: CGFloat = minWidth
 
-        // Calculate maximum text width across all menu items
         for section in dataSource {
             for content in section.contents {
                 switch content.content {
@@ -278,11 +284,9 @@ class ChidoriMenu: UIViewController {
             }
         }
 
-        // Calculate available screen width
         let screenWidth = UIScreen.main.bounds.width
         let availableWidth = screenWidth - 64 // 32 padding on each side
 
-        // Use new formula: min(max(menu item width) + 32, available width - 64)
         let calculatedWidth = maxContentWidth + 32
         let finalWidth = min(calculatedWidth, availableWidth)
 

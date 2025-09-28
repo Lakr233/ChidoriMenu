@@ -22,7 +22,7 @@ extension ChidoriMenu {
             for indexPath in tableView.indexPathsForSelectedRows ?? [] {
                 tableView.deselectRow(at: indexPath, animated: false)
             }
-            executeAction(indexPath)
+            executeAction(indexPath, touchLocation: offsetInTableView)
         } else {
             // This API always confuses me, it does not *select* the cell in a way that would call `didSelectRowAtIndexPath`, this just visually highlights it!
             tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)

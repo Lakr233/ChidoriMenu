@@ -50,11 +50,8 @@ class ChidoriPresentationController: UIPresentationController {
         guard let menu = presentedViewController as? ChidoriMenu else {
             return .zero
         }
-        var height = menu.height
-        if let heightLimit = containerView?.bounds.height {
-            height = min(height, heightLimit * 0.75)
-        }
-        let menuSize = CGSize(width: menu.width, height: height)
+
+        let menuSize = menu.preferredContentSize
         let originatingPoint = calculateOriginatingPoint(
             anchorPoint: menu.anchorPoint,
             menuSize: menuSize

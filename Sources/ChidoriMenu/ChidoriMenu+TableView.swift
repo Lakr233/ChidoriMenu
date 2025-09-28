@@ -84,7 +84,6 @@ extension ChidoriMenu: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let action = item(at: indexPath) else { return }
 
-        // Check if action is disabled
         switch action.content {
         case let .action(action):
             if action.chidoriIsDisabled {
@@ -98,7 +97,12 @@ extension ChidoriMenu: UITableViewDelegate, UITableViewDataSource {
             }
         }
 
-        executeAction(indexPath)
+        // Get touch location from table view's gesture recognizers
+        var touchLocation: CGPoint? = nil
+        if let tapGesture = tableView.gestureRecognizers?.first(where: { $0 is UITapGestureRecognizer }) as? UITapGestureRecognizer {
+            touchLocation = tapGesture.location(in: tableView)
+        }
+        executeAction(indexPath, touchLocation: touchLocation)
     }
 
     func tableView(_: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -140,16 +144,63 @@ extension ChidoriMenu: UITableViewDelegate, UITableViewDataSource {
     func updateMenuSize() {
         tableView.layoutIfNeeded()
 
-        UIView.animate(
-            withDuration: 0.3,
-            delay: 0,
-            usingSpringWithDamping: 0.8,
-            initialSpringVelocity: 1.0
-        ) {
-            self.preferredContentSize = CGSize(width: self.width, height: self.height)
+        let measuredHeight = tableView.contentSize.height.rounded(.up)
+        let menuWidth = width
 
-            self.presentationController?.containerView?.setNeedsLayout()
-            self.presentationController?.containerView?.layoutIfNeeded()
+        func applySize(_ size: CGSize) {
+            view.bounds.size = size
+            view.frame.size = size
+            view.setNeedsLayout()
+            view.layoutIfNeeded()
+        }
+
+        let intrinsicSize = CGSize(width: menuWidth, height: measuredHeight)
+        heightOverride = measuredHeight
+
+        guard let controller = presentationController as? ChidoriPresentationController else {
+            assertionFailure()
+            applySize(intrinsicSize)
+            return
+        }
+
+        guard let containerView = controller.containerView else {
+            applySize(intrinsicSize)
+            return
+        }
+
+        let safeArea = containerView.safeAreaInsets
+        let maximumHeight = max(
+            MenuLayout.minRowHeight,
+            containerView.bounds.height
+                - controller.minimalEdgeInset * 2
+                - safeArea.top
+                - safeArea.bottom
+        )
+        let clampedHeight = min(measuredHeight, maximumHeight)
+
+        heightOverride = clampedHeight
+
+        let updateLayout = {
+            let newFrame = controller.frameOfPresentedViewInContainerView
+            self.view.frame = newFrame
+            controller.presentedView?.frame = newFrame
+            self.anchor(to: newFrame)
+            self.view.layoutIfNeeded()
+        }
+
+        if containerView.window != nil, UIView.areAnimationsEnabled {
+            UIView.animate(
+                withDuration: 0.5,
+                delay: 0,
+                usingSpringWithDamping: 1.0,
+                initialSpringVelocity: 0.8
+            ) {
+                updateLayout()
+                containerView.layoutIfNeeded()
+            }
+        } else {
+            updateLayout()
+            containerView.layoutIfNeeded()
         }
     }
 

@@ -124,7 +124,6 @@ extension ChidoriMenu {
 
             let contentBounds = contentView.bounds
 
-            // Top separator
             topSep.frame = CGRect(
                 x: 0,
                 y: 0,
@@ -132,7 +131,6 @@ extension ChidoriMenu {
                 height: 0.5
             )
 
-            // Icon - vertically centered
             let iconFrame = CGRect(
                 x: MenuLayout.horizontalPadding,
                 y: (contentBounds.height - MenuLayout.iconSize) / 2,
@@ -141,7 +139,6 @@ extension ChidoriMenu {
             )
             iconView.frame = iconFrame
 
-            // Trailing icon - vertically centered
             let trailingIconFrame = CGRect(
                 x: contentBounds.width - MenuLayout.horizontalPadding - MenuLayout.iconSize,
                 y: (contentBounds.height - MenuLayout.iconSize) / 2,
@@ -150,21 +147,15 @@ extension ChidoriMenu {
             )
             trailingIconView.frame = trailingIconFrame
 
-            // Title label - vertically centered with proper multi-line support
-            // Use consistent text alignment when any menu item in this section has an icon
             let titleX: CGFloat = if sectionHasAnyIcon {
-                // All text aligned after icon space when any item in section has an icon
                 MenuLayout.horizontalPadding + MenuLayout.iconSize + MenuLayout.spacing
             } else {
-                // When no icons in section, align text to left edge
                 MenuLayout.horizontalPadding
             }
             let titleWidth = contentBounds.width - titleX - MenuLayout.horizontalPadding - (trailingIconView.isHidden ? 0 : MenuLayout.iconSize + MenuLayout.spacing)
 
-            // Calculate label height based on content
             let labelHeight = titleLabel.sizeThatFits(CGSize(width: titleWidth, height: .greatestFiniteMagnitude)).height
 
-            // Vertically center the label within the cell
             let labelY = (contentBounds.height - labelHeight) / 2
 
             titleLabel.frame = CGRect(
