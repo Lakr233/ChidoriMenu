@@ -109,33 +109,27 @@ extension ChidoriMenu: UITableViewDelegate, UITableViewDataSource {
         }
 
         let menuWidth = width
-        var availableTextWidth = menuWidth - MenuLayout.horizontalPadding * 2
 
-        // Use consistent text alignment when any menu item in this section has an icon
-        if section.hasAnyIcon {
+        // Calculate available text width matching the cell layout logic
+        let titleX: CGFloat = if section.hasAnyIcon {
             // All text aligned after icon space when any item in section has an icon
-            availableTextWidth -= MenuLayout.iconSize + MenuLayout.spacing
+            MenuLayout.horizontalPadding + MenuLayout.iconSize + MenuLayout.spacing
+        } else {
+            // When no icons in section, align text to left edge
+            MenuLayout.horizontalPadding
         }
 
-        switch item.content {
+        // Calculate trailing icon space
+        let trailingIconSpace: CGFloat = switch item.content {
         case let .action(action):
-            // Subtract icon space if present (unless already accounted for)
-            if action.image != nil && !section.hasAnyIcon {
-                availableTextWidth -= MenuLayout.iconSize + MenuLayout.spacing
-            }
-            // Subtract trailing icon space if present
-            if action.chidoriKeepsMenuPresented || action.state != .off {
-                availableTextWidth -= MenuLayout.iconSize + MenuLayout.spacing
-            }
-
-        case let .submenu(menu):
-            // Subtract icon space if present (unless already accounted for)
-            if menu.image != nil, !section.hasAnyIcon {
-                availableTextWidth -= MenuLayout.iconSize + MenuLayout.spacing
-            }
-            // Always subtract trailing icon for submenus
-            availableTextWidth -= MenuLayout.iconSize + MenuLayout.spacing
+            // Check if trailing icon will be visible
+            (action.chidoriKeepsMenuPresented || action.state != .off) ? MenuLayout.iconSize + MenuLayout.spacing : 0
+        case .submenu:
+            // Submenus always have trailing disclosure indicator
+            MenuLayout.iconSize + MenuLayout.spacing
         }
+
+        let availableTextWidth = menuWidth - titleX - MenuLayout.horizontalPadding - trailingIconSpace
 
         // Calculate text height
         let font = UIFont.preferredFont(forTextStyle: .body)
