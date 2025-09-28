@@ -83,8 +83,8 @@ class ChidoriAnimationController: NSObject, ChidoriDelegateProtocol {
         let propertyAnimator = UIViewPropertyAnimator(
             duration: duration,
             timingParameters: UISpringTimingParameters(
-                dampingRatio: 0.8,
-                initialVelocity: .init(dx: 0.8, dy: 0.8)
+                dampingRatio: 0.75,
+                initialVelocity: .init(dx: 1.0, dy: 1.0)
             )
         )
 
