@@ -22,6 +22,8 @@ class ChidoriMenu: UIViewController {
 
     var transitionController: ChidoriAnimationController?
     private var resolvedWidth: CGFloat?
+    private var externalGestureObservations: [NSKeyValueObservation] = []
+    private var hasScheduledDismissalForExternalGesture = false
 
     var width: CGFloat {
         if let resolvedWidth { return resolvedWidth }
@@ -166,6 +168,12 @@ class ChidoriMenu: UIViewController {
         super.viewDidAppear(animated)
         transitionController = nil
         tableView.becomeFirstResponder()
+        startMonitoringExternalGestures()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        stopMonitoringExternalGestures()
     }
 
     func anchor(to frame: CGRect) {
@@ -251,6 +259,99 @@ class ChidoriMenu: UIViewController {
         while let currentParent = parent {
             execute(currentParent)
             parent = currentParent.presentingViewController as? ChidoriMenu
+        }
+    }
+
+    private func startMonitoringExternalGestures() {
+        assert(Thread.isMainThread)
+        stopMonitoringExternalGestures()
+        hasScheduledDismissalForExternalGesture = false
+
+        guard let presentingView = presentingParent?.viewIfLoaded ?? presentingParent?.view else {
+            return
+        }
+
+        var collected: [UIGestureRecognizer] = []
+        var visited = Set<ObjectIdentifier>()
+        collectGestureRecognizers(from: presentingView, into: &collected, visited: &visited)
+
+        let externalPanRecognizers = collected.compactMap { recognizer -> UIPanGestureRecognizer? in
+            guard let pan = recognizer as? UIPanGestureRecognizer else { return nil }
+            guard let hostView = pan.view else { return nil }
+            return hostView.isDescendant(of: view) ? nil : pan
+        }
+
+        guard !externalPanRecognizers.isEmpty else { return }
+
+        externalPanRecognizers.forEach { recognizer in
+            let observation = recognizer.observe(\UIPanGestureRecognizer.state, options: [.initial, .new]) { [weak self] recognizer, _ in
+                self?.handleExternalPanStateChange(recognizer)
+            }
+            externalGestureObservations.append(observation)
+        }
+    }
+
+    private func stopMonitoringExternalGestures() {
+        externalGestureObservations.removeAll()
+    }
+
+    private func collectGestureRecognizers(
+        from view: UIView,
+        into storage: inout [UIGestureRecognizer],
+        visited: inout Set<ObjectIdentifier>
+    ) {
+        if let recognizers = view.gestureRecognizers {
+            for recognizer in recognizers {
+                let identifier = ObjectIdentifier(recognizer)
+                guard !visited.contains(identifier) else { continue }
+                visited.insert(identifier)
+                storage.append(recognizer)
+            }
+        }
+
+        for subview in view.subviews {
+            collectGestureRecognizers(from: subview, into: &storage, visited: &visited)
+        }
+    }
+
+    private func handleExternalPanStateChange(_ recognizer: UIPanGestureRecognizer) {
+        guard shouldDismissDueToExternalGesture(recognizer) else { return }
+        dismissDueToExternalGesture()
+    }
+
+    private func shouldDismissDueToExternalGesture(_ recognizer: UIPanGestureRecognizer) -> Bool {
+        guard !hasScheduledDismissalForExternalGesture else { return false }
+        guard let hostView = recognizer.view else { return false }
+        guard recognizer.isEnabled else { return false }
+        guard hostView.window === view.window else { return false }
+        guard !hostView.isDescendant(of: view) else { return false }
+
+        switch recognizer.state {
+        case .began, .changed:
+            break
+        default:
+            return false
+        }
+
+        if recognizer.numberOfTouches == 0 {
+            return false
+        }
+
+        return true
+    }
+
+    private func dismissDueToExternalGesture() {
+        guard !hasScheduledDismissalForExternalGesture else { return }
+        hasScheduledDismissalForExternalGesture = true
+
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            self.stopMonitoringExternalGestures()
+            if let presenter = self.presentingParent {
+                presenter.dismiss(animated: true)
+            } else {
+                self.dismiss(animated: true)
+            }
         }
     }
 
